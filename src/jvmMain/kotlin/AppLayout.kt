@@ -5,18 +5,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import canvas.SchemaDrawer
+import canvas.rememberCommands
 
 @Composable
 @Preview
 fun AppLayout() {
-    val points: SnapshotStateList<Point> = remember { mutableStateListOf() }
+    val commands = rememberCommands()
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -37,7 +35,7 @@ fun AppLayout() {
                     .background(color = Color.LightGray)
                     .padding(4.dp)
             ) {
-                items(points) { point ->
+                items(commands.list) { point ->
                     Text(
                         point.description(), modifier = Modifier
                             .padding(PaddingValues(vertical = 4.dp))
@@ -55,14 +53,14 @@ fun AppLayout() {
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                SchemaDrawer(points)
+                SchemaDrawer(commands)
             }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                AppControls(points)
+                AppControls()
             }
         }
     }

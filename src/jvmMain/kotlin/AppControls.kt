@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AppControls(points: List<Point>) {
+fun AppControls() {
     Row(
         modifier = Modifier
             .fillMaxWidth(),

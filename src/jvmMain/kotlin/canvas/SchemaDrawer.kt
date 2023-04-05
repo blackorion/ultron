@@ -1,29 +1,30 @@
 package canvas
 
-import Point
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SchemaDrawer(points: SnapshotStateList<Point>) {
-    var mousePosition by remember { mutableStateOf(Offset.Zero) }
+fun SchemaDrawer(commands: Commands) {
+    val schemaState = rememberSchemaState(commands)
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         CanvasBoard(
-            points = points,
-            onClick = { points.add(Point(mousePosition)) },
-            onMove = { mousePosition = it }
+            points = schemaState.shapes,
+            onClick = { schemaState.onClick() },
+            onMove = { schemaState.onMouseMove(it) }
         )
-        SchemaControls(mousePosition)
+        SchemaControls(schemaState = schemaState, mouseDetails = {
+            Row {
+                Text("x: ${schemaState.mousePosition.x}")
+                Text("y: ${schemaState.mousePosition.y}")
+            }
+        })
     }
 }
 
