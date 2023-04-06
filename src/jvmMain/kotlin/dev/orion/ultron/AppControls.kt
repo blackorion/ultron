@@ -9,9 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.orion.ultron.canvas.SerialPortSelector
+import dev.orion.ultron.notifications.Notifications
 
 @Composable
 fun AppControls(commands: Commands) {
+    val n = Notifications.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth(),

@@ -1,7 +1,6 @@
 package dev.orion.ultron.canvas
 
 import androidx.compose.ui.geometry.Offset
-import dev.orion.ultron.Commands
 
 interface CanvasEventHandler {
     fun init()
@@ -39,6 +38,8 @@ class DrawCanvasEventHandler(private val canvas: CanvasState) : DefaultCanvasEve
 class EditCanvasEventHandler(private val canvas: CanvasState) : DefaultCanvasEventHandler() {
     override fun handleClick(offset: Offset) {
         val bounds = HitBox(offset)
+
+        canvas.commands.list.forEach { it.deactivate() }
 
         canvas.commands.list
             .find { bounds.contains(it.position) }

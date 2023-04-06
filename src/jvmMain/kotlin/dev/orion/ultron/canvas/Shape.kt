@@ -15,13 +15,12 @@ class Shape(private val offset: Offset) {
 
     fun render(scope: DrawScope, prev: Shape?) {
         renderPoint(scope)
+        renderHint(scope)
 
         if (prev === null) return
 
         scope.drawLine(
-            start = prev.offset,
-            end = offset,
-            color = Color.Black
+            start = prev.offset, end = offset, color = Color.Black
         )
     }
 
@@ -31,16 +30,27 @@ class Shape(private val offset: Offset) {
 
         scope.drawRect(
             topLeft = Offset(
-                x = offset.x - padding,
-                y = offset.y - padding
-            ),
-            size = Size(
-                width = size,
-                height = size
-            ),
-            color = if (inFocus) Color.Red
+                x = offset.x - padding, y = offset.y - padding
+            ), size = Size(
+                width = size, height = size
+            ), color = if (inFocus) Color.Red
             else if (isActive) Color.Green
             else Color.Blue
+        )
+    }
+
+    private fun renderHint(scope: DrawScope) {
+        if (!inFocus) return
+
+        val x = offset.x
+        val y = offset.y - 70
+
+        scope.drawRect(
+            topLeft = Offset(x = x, y = y),
+            size = Size(
+                width = 150f, height = 60f
+            ),
+            color = Color.Cyan,
         )
     }
 

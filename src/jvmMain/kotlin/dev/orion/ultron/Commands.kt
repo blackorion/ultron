@@ -9,8 +9,8 @@ class RemoteDevice(port: String) {
 
     val isReady: Boolean get() = port.isOpen
 
-    fun connect() {
-        port.openPort()
+    fun connect(): Boolean {
+        return port.openPort()
     }
 
     fun close() {
