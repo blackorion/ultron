@@ -76,7 +76,7 @@ class Commands(private val notifications: NotificationsState) {
 
         arduino.outputStream.use { os ->
             os.bufferedWriter().use {
-                it.append("x:10,y:20").flush()
+                it.append("x0;").flush()
             }
         }
 
