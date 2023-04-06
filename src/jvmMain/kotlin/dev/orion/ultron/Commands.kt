@@ -3,6 +3,8 @@ package dev.orion.ultron
 import androidx.compose.runtime.*
 import com.fazecast.jSerialComm.SerialPort
 import dev.orion.ultron.canvas.Shape
+import dev.orion.ultron.notifications.Notifications
+import dev.orion.ultron.notifications.NotificationsState
 
 class RemoteDevice(port: String) {
     private val port = SerialPort.getCommPort(port)
@@ -14,12 +16,11 @@ class RemoteDevice(port: String) {
     }
 
     fun close() {
-        if (port.isOpen)
-            port.closePort()
+        if (port.isOpen) port.closePort()
     }
 }
 
-class Commands {
+class Commands(private val notifications: NotificationsState) {
     private var port by mutableStateOf<String?>(null)
     private var remoteConnection: RemoteDevice? = null
     val list: MutableList<Shape> = mutableStateListOf()
@@ -53,7 +54,39 @@ class Commands {
             remoteConnection = RemoteDevice(it)
         }
     }
+
+    fun runTest() {
+        if (port == null) {
+            notifications.add("порт не указан")
+            return
+        }
+
+        notifications.add("подключаемся к порту: $port")
+
+        val arduino = SerialPort.getCommPort(port)
+        arduino.setComPortParameters(9600, 8, 1, 0)
+        arduino.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0)
+
+        if (!arduino.openPort()) {
+            notifications.add("ошибка подключения к порту")
+            return
+        }
+
+        notifications.add("порт открыт")
+
+        arduino.outputStream.use { os ->
+            os.bufferedWriter().use {
+                it.append("x:10,y:20").flush()
+            }
+        }
+
+        arduino.closePort()
+    }
 }
 
 @Composable
-fun rememberCommands() = remember { Commands() }
+fun rememberCommands(): Commands {
+    val notifications = Notifications.current
+
+    return remember { Commands(notifications) }
+}

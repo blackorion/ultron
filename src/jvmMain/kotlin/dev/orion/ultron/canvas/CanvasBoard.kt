@@ -16,17 +16,19 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
-import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalTextApi::class)
 @Composable
-@OptIn(ExperimentalComposeUiApi::class)
 fun CanvasBoard(shapes: List<Shape>, onClick: () -> Unit, onMove: (Offset) -> Unit) {
     val color = Color.White
     val size = 400.dp
     val intersectionSource = remember { MutableInteractionSource() }
     var mousePointer by remember { mutableStateOf(Offset.Zero) }
     var inFocus by remember { mutableStateOf(false) }
+    val tm = rememberTextMeasurer()
 
     Box {
         Canvas(
@@ -55,7 +57,7 @@ fun CanvasBoard(shapes: List<Shape>, onClick: () -> Unit, onMove: (Offset) -> Un
 
             shapes.forEachIndexed { ix, point ->
                 val prev = if (ix > 0) shapes[ix - 1] else null
-                point.render(scope, prev)
+                point.render(scope, prev, tm)
             }
         }
 

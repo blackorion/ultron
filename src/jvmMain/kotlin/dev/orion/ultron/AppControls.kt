@@ -3,8 +3,10 @@ package dev.orion.ultron
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,13 +26,23 @@ fun AppControls(commands: Commands) {
             commands.setSerialPort(it)
         })
 
-        if (commands.connected)
+        IconButton(onClick = {
+            commands.runTest()
+        }) {
+            Icon(
+                Icons.Default.PlayArrow,
+                contentDescription = "",
+                modifier = Modifier.size(ButtonDefaults.IconSize)
+            )
+        }
+
+        if (commands.connected) {
             Button(onClick = {
                 commands.connect()
             }) {
                 Text("отключить")
             }
-        else if (commands.hasPort)
+        } else if (commands.hasPort)
             Button(onClick = {
                 commands.connect()
             }) {
