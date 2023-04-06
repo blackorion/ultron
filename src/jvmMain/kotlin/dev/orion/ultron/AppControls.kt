@@ -1,0 +1,37 @@
+package dev.orion.ultron
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import dev.orion.ultron.canvas.SerialPortSelector
+
+@Composable
+fun AppControls(commands: Commands) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        SerialPortSelector(onChange = {
+            commands.setSerialPort(it)
+        })
+
+        if (commands.connected)
+            Button(onClick = {
+                commands.connect()
+            }) {
+                Text("отключить")
+            }
+        else if (commands.hasPort)
+            Button(onClick = {
+                commands.connect()
+            }) {
+                Text("подключить")
+            }
+    }
+}

@@ -1,5 +1,6 @@
+package dev.orion.ultron.canvas
+
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
 import androidx.compose.material.DropdownMenu
@@ -11,7 +12,7 @@ import androidx.compose.ui.Modifier
 import com.fazecast.jSerialComm.SerialPort
 
 @Composable
-fun SerialPortSelector() {
+fun SerialPortSelector(onChange: (String?) -> Unit) {
     val ports = SerialPort.getCommPorts()
     val items = ports.map { it.systemPortName }
     var expanded by remember { mutableStateOf(false) }
@@ -19,7 +20,6 @@ fun SerialPortSelector() {
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
             .wrapContentSize(Alignment.TopStart)
     ) {
         Button(onClick = { expanded = true }) {
@@ -33,6 +33,7 @@ fun SerialPortSelector() {
                 DropdownMenuItem(onClick = {
                     selected = ix
                     expanded = false
+                    onChange(option)
                 }) {
                     Text(option)
                 }

@@ -1,4 +1,4 @@
-package canvas
+package dev.orion.ultron.canvas
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -8,6 +8,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
@@ -35,26 +36,38 @@ fun MenuItem(icon: ImageVector, checked: Boolean, onCheckedChange: (Boolean) -> 
 }
 
 @Composable
-fun SchemaControls(
-    schemaState: SchemaState,
-    mouseDetails: @Composable () -> Unit,
-) {
+fun SchemaControls(canvasState: CanvasState) {
     val scope = rememberCoroutineScope()
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             MenuItem(
-                icon = Icons.Default.Edit,
-                checked = schemaState.isHandledBy(DrawCanvasEventHandler),
+                icon = Icons.Default.Add,
+                checked = canvasState.isHandledBy(DrawCanvasEventHandler::class.java),
                 onCheckedChange = {
                     scope.launch {
                         if (it)
-                            schemaState.switchTo(DrawCanvasEventHandler)
+                            canvasState.switchTo(DrawCanvasEventHandler(canvasState))
                         else
-                            schemaState.resetHandler()
+                            canvasState.resetHandler()
+                    }
+
+                }
+            )
+            MenuItem(
+                icon = Icons.Default.Edit,
+                checked = canvasState.isHandledBy(EditCanvasEventHandler::class.java),
+                onCheckedChange = {
+                    scope.launch {
+                        if (it)
+                            canvasState.switchTo(EditCanvasEventHandler(canvasState))
+                        else
+                            canvasState.resetHandler()
                     }
 
                 }
@@ -62,10 +75,13 @@ fun SchemaControls(
             MenuItem(
                 icon = Icons.Default.Clear,
                 checked = false,
-                onCheckedChange = { scope.launch { schemaState.clear() } }
+                onCheckedChange = {
+                    scope.launch {
+                        canvasState.resetHandler()
+                        canvasState.clear()
+                    }
+                }
             )
         }
-
-        mouseDetails()
     }
 }

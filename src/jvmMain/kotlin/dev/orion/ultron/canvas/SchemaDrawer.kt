@@ -1,11 +1,10 @@
-package canvas
+package dev.orion.ultron.canvas
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
+import dev.orion.ultron.Commands
 
 @Composable
 fun SchemaDrawer(commands: Commands) {
@@ -15,16 +14,11 @@ fun SchemaDrawer(commands: Commands) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         CanvasBoard(
-            points = schemaState.shapes,
+            shapes = schemaState.shapes,
             onClick = { schemaState.onClick() },
             onMove = { schemaState.onMouseMove(it) }
         )
-        SchemaControls(schemaState = schemaState, mouseDetails = {
-            Row {
-                Text("x: ${schemaState.mousePosition.x}")
-                Text("y: ${schemaState.mousePosition.y}")
-            }
-        })
+        SchemaControls(canvasState = schemaState)
     }
 }
 

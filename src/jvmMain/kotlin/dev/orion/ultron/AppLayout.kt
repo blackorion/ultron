@@ -1,3 +1,5 @@
+package dev.orion.ultron
+
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,8 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import canvas.SchemaDrawer
-import canvas.rememberCommands
+import dev.orion.ultron.canvas.SchemaDrawer
 
 @Composable
 @Preview
@@ -26,7 +27,7 @@ fun AppLayout() {
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(2f)
-                .padding(16.dp),
+                .padding(16.dp)
         ) {
             Text(text = "Команды:")
             LazyColumn(
@@ -47,6 +48,7 @@ fun AppLayout() {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .fillMaxHeight()
+                .padding(16.dp)
                 .width(400.dp)
         ) {
             Box(
@@ -60,7 +62,7 @@ fun AppLayout() {
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                AppControls()
+                AppControls(commands)
             }
         }
     }
