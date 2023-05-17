@@ -14,13 +14,11 @@ class Shape(private val offset: Offset) {
         get() = Offset(x = offset.x, y = offset.y)
 
     fun render(scope: DrawScope, prev: Shape?) {
+        println("render shape")
+
         renderPoint(scope)
 
-        if (prev === null) return
-
-        scope.drawLine(
-            start = prev.offset, end = offset, color = Color.Black
-        )
+        if (prev != null) renderEdge(scope, prev)
     }
 
     private fun renderPoint(scope: DrawScope) {
@@ -35,6 +33,12 @@ class Shape(private val offset: Offset) {
             ), color = if (inFocus) Color.Red
             else if (isActive) Color.Green
             else Color.Blue
+        )
+    }
+
+    private fun renderEdge(scope: DrawScope, prev: Shape) {
+        scope.drawLine(
+            start = prev.offset, end = offset, color = Color.Black
         )
     }
 

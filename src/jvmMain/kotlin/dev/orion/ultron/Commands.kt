@@ -80,6 +80,14 @@ class Commands(private val notifications: NotificationsState) {
             }
         }
 
+        arduino.inputStream.use { os ->
+            os.bufferedReader().use {
+                it.useLines { line ->
+                    notifications.add(line.toString())
+                }
+            }
+        }
+
         arduino.closePort()
     }
 }

@@ -18,20 +18,21 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
 
+val canvasColor = Color.White
+val canvasSize = 400.dp
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CanvasBoard(shapes: List<Shape>, onClick: () -> Unit, onMove: (Offset) -> Unit) {
-    val color = Color.White
-    val size = 400.dp
-    val intersectionSource = remember { MutableInteractionSource() }
+    val intersectionSource = MutableInteractionSource()
     var mousePointer by remember { mutableStateOf(Offset.Zero) }
     var inFocus by remember { mutableStateOf(false) }
 
     Box {
         Canvas(
             modifier = Modifier
-                .size(size)
-                .background(color)
+                .size(canvasSize)
+                .background(canvasColor)
                 .clickable(
                     onClick = onClick,
                     indication = null,
@@ -49,12 +50,10 @@ fun CanvasBoard(shapes: List<Shape>, onClick: () -> Unit, onMove: (Offset) -> Un
                     inFocus = false
                 }
         ) {
-            val scope = this
-            drawRect(size = Size(size.toPx(), size.toPx()), color = color)
+            drawRect(size = Size(canvasSize.toPx(), canvasSize.toPx()), color = canvasColor)
 
-            shapes.forEachIndexed { ix, point ->
-                val prev = if (ix > 0) shapes[ix - 1] else null
-                point.render(scope, prev)
+            shapes.windowed(2, 1) { (current, previous) ->
+                current.render(this, previous)
             }
         }
 

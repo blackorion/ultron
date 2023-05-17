@@ -13,4 +13,4 @@ you could use [chocolatey](https://chocolatey.org/install) to ease the build pro
 - install java jdk `choco install oraclejdk`
 - install gradle `choco install gradle`
 - open application folder in command prompt
-- run `gradle packageDistributionForCurrentOS`
+- run `gradlew packageDistributionForCurrentOS`
