@@ -82,8 +82,11 @@ class Commands(private val notifications: NotificationsState) {
 
         arduino.inputStream.use { os ->
             os.bufferedReader().use {
-                val line = it.readLine()
-                notifications.add(line)
+                it.useLines { seq ->
+                    seq.forEach { line ->
+                        notifications.add(line)
+                    }
+                }
             }
         }
 
