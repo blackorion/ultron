@@ -3,47 +3,54 @@ package dev.orion.ultron
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.runtime.Composable
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Window
 import dev.orion.ultron.canvas.SerialPortSelector
 
 @Composable
-fun AppControls(commands: Commands) {
+fun AppControls(
+    arduino: Arduino, commands: Commands,
+) {
+    val port = remember { mutableStateOf<String?>(null) }
+    var open by remember { mutableStateOf(false) }
+
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         SerialPortSelector(onChange = {
-            commands.setSerialPort(it)
+            port.value = it
         })
 
-        IconButton(onClick = {
-            commands.runTest()
-        }) {
-            Icon(
-                Icons.Default.PlayArrow,
-                contentDescription = "",
-                modifier = Modifier.size(ButtonDefaults.IconSize)
-            )
-        }
-
-        if (commands.connected) {
+        if (arduino.status.value.isConnected) {
             Button(onClick = {
-                commands.connect()
+                arduino.disconnect()
             }) {
                 Text("отключить")
             }
-        } else if (commands.hasPort)
+        } else if (port.value != null && !arduino.status.value.isConnected)
             Button(onClick = {
-                commands.connect()
+                arduino.connect(port.value!!)
             }) {
                 Text("подключить")
             }
+
+        if (arduino.status.value.isConnected)
+            Button(onClick = {
+                open = true
+            }) {
+                Text("терминал")
+            }
+
+        if (open)
+            Window(onCloseRequest = {
+                open = false
+            }) {
+                ArduinoTerminal(arduino)
+            }
     }
 }
+
