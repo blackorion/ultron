@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import dev.orion.ultron.canvas.Shape
 
 @Composable
-fun CommandsList(commands: Commands) {
-    Box(modifier = Modifier.fillMaxWidth()) {
+fun CommandsList(commands: Commands, modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxWidth()) {
         val state = rememberLazyListState()
 
         LazyColumn(

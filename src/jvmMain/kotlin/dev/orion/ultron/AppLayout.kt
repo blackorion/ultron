@@ -1,10 +1,11 @@
 package dev.orion.ultron
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -33,12 +34,12 @@ fun AppLayout() {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .background(color = MaterialTheme.colors.background)
                     .fillMaxSize()
-                    .weight(2f)
+                    .weight(20f)
             ) {
                 Text(text = "Команды:")
                 CommandsList(commands)
+                CommandEditor(commands)
             }
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -55,4 +56,23 @@ fun AppLayout() {
             }
         }
     }
+}
+
+@Composable
+fun CommandEditor(commands: Commands) {
+    val command = remember { mutableStateOf("") }
+
+    LaunchedEffect(commands.selected) {
+        commands.getSelected()?.let {
+            command.value = it.description()
+        }
+    }
+
+    TextField(
+        value = command.value,
+        onValueChange = { command.value = it },
+        label = { Text("Команда") },
+        modifier = Modifier
+            .fillMaxWidth()
+    )
 }
