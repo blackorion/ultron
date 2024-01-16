@@ -1,17 +1,19 @@
 package dev.orion.ultron
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
@@ -23,7 +25,6 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ArduinoTerminal(arduino: Arduino) {
     val message = remember { mutableStateOf("") }
-    val scrollState = rememberScrollState(0)
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp)
@@ -52,15 +53,32 @@ fun ArduinoTerminal(arduino: Arduino) {
             }
         }
 
-        Column(modifier = Modifier.fillMaxHeight().padding(top = 16.dp)) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 16.dp)
+        ) {
             Text("Сообщения:")
 
-            LazyColumn(
-                modifier = Modifier.fillMaxHeight().scrollable(scrollState, orientation = Orientation.Vertical)
-            ) {
-                items(arduino.messages) { message ->
-                    Text(message)
+            Box {
+                val state = rememberLazyListState()
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colors.background),
+                    state
+                ) {
+                    items(arduino.messages) { message ->
+                        Text(message)
+                    }
                 }
+
+                VerticalScrollbar(
+                    modifier = Modifier.fillMaxHeight().align(Alignment.CenterEnd),
+                    adapter = rememberScrollbarAdapter(state)
+                )
             }
         }
     }
