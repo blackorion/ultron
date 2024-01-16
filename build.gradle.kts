@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("multiplatform")
@@ -24,6 +25,7 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation("com.fazecast:jSerialComm:[2.0.0,3.0.0)")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC2")
             }
         }
         val jvmTest by getting

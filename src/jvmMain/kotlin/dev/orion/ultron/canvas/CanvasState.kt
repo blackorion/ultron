@@ -3,8 +3,12 @@ package dev.orion.ultron.canvas
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import dev.orion.ultron.Commands
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CanvasState(val commands: Commands) {
+    private val scope = CoroutineScope(Dispatchers.Default)
     private var handler: CanvasEventHandler by mutableStateOf(IdleCanvasEventHandler(this))
     private var mousePosition by mutableStateOf(Offset.Zero)
 
@@ -14,7 +18,7 @@ class CanvasState(val commands: Commands) {
         handler.handleClick(mousePosition)
     }
 
-    fun onMouseMove(position: Offset) {
+    fun onMouseMove(position: Offset) = scope.launch {
         mousePosition = position
         handler.handleMove(position)
     }
@@ -42,4 +46,4 @@ class CanvasState(val commands: Commands) {
 }
 
 @Composable
-fun rememberSchemaState(commands: Commands) = remember(commands) { CanvasState(commands) }
+fun rememberSchemaState(commands: Commands) = remember(commands.list) { CanvasState(commands) }

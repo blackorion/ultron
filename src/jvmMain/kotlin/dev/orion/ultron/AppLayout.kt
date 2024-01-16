@@ -1,6 +1,8 @@
 package dev.orion.ultron
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -31,7 +33,8 @@ fun AppLayout() {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .background(color = MaterialTheme.colors.background)
+                    .fillMaxSize()
                     .weight(2f)
             ) {
                 Text(text = "Команды:")
