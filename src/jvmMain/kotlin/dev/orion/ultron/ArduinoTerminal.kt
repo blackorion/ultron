@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
@@ -21,7 +21,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ArduinoTerminal(arduino: Arduino) {
     val message = remember { mutableStateOf("") }
@@ -67,7 +67,7 @@ fun ArduinoTerminal(arduino: Arduino) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colors.background),
+                        .background(MaterialTheme.colorScheme.background),
                     state
                 ) {
                     items(arduino.messages) { message ->

@@ -2,10 +2,10 @@ package dev.orion.ultron.canvas
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Button
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,13 +30,14 @@ fun SerialPortSelector(onChange: (String?) -> Unit) {
             onDismissRequest = { expanded = false }
         ) {
             items.forEachIndexed { ix, option ->
-                DropdownMenuItem(onClick = {
-                    selected = ix
-                    expanded = false
-                    onChange(option)
-                }) {
-                    Text(option)
-                }
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        selected = ix
+                        expanded = false
+                        onChange(option)
+                    }
+                )
             }
         }
     }

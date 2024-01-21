@@ -11,14 +11,14 @@ class Arduino {
     val messages = mutableStateListOf<String>()
     private var arduino: SerialPort? = null
 
-    fun connect(port: String): Boolean {
+    fun connect(port: String, freq: Int = 9600): Boolean {
         if (isConnected())
             throw IllegalStateException("already connected")
 
         arduino = SerialPort.getCommPort(port)
 
         return arduino?.let {
-            it.setComPortParameters(9600, 8, 1, 0)
+            it.setComPortParameters(freq, 8, 1, 0)
             it.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0)
 
             it.addDataListener(object : SerialPortDataListener {

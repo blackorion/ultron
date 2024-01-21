@@ -3,10 +3,10 @@ package dev.orion.ultron.canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconToggleButton
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -29,7 +29,7 @@ fun MenuItem(icon: ImageVector, checked: Boolean, onCheckedChange: (Boolean) -> 
         Icon(
             imageVector = icon,
             contentDescription = "",
-            tint = if (checked) MaterialTheme.colors.secondary else Color.Black,
+            tint = if (checked) MaterialTheme.colorScheme.secondary else Color.Black,
             modifier = Modifier.size(ButtonDefaults.IconSize)
         )
     }

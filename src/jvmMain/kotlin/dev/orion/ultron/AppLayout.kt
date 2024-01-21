@@ -1,8 +1,9 @@
 package dev.orion.ultron
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +59,7 @@ fun AppLayout() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommandEditor(commands: Commands) {
     val command = remember { mutableStateOf("") }

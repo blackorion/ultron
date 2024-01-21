@@ -7,8 +7,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Modifier
@@ -24,7 +24,7 @@ fun CommandsList(commands: Commands, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.background),
+                .background(MaterialTheme.colorScheme.background),
             state = state,
         ) {
             items(commands.list) { command ->

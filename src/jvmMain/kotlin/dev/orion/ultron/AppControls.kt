@@ -3,18 +3,19 @@ package dev.orion.ultron
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import dev.orion.ultron.canvas.SerialPortSelector
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppControls(
     arduino: Arduino, commands: Commands,
 ) {
+    var freq by remember { mutableStateOf<Int>(9600) }
     val port = remember { mutableStateOf<String?>(null) }
     var open by remember { mutableStateOf(false) }
 
@@ -31,15 +32,21 @@ fun AppControls(
             }) {
                 Text("отключить")
             }
-        } else if (port.value != null && !arduino.status.value.isConnected)
-            Button(onClick = {
-                arduino.connect(port.value!!)
+        } else if (port.value != null && !arduino.status.value.isConnected) {
+            TextField(
+                value = freq.toString(),
+                onValueChange = { freq = it.toInt() },
+                placeholder = { Text("частота") },
+            )
+            TextButton(onClick = {
+                arduino.connect(port.value!!, freq)
             }) {
                 Text("подключить")
             }
+        }
 
         if (arduino.status.value.isConnected)
-            Button(onClick = {
+            TextButton(onClick = {
                 open = true
             }) {
                 Text("терминал")
