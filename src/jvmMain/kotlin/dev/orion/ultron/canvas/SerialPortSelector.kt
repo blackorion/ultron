@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import com.fazecast.jSerialComm.SerialPort
 
 @Composable
-fun SerialPortSelector(onChange: (String?) -> Unit) {
+fun SerialPortSelector(onChange: (String?) -> Unit, disabled: Boolean = false) {
     val ports = SerialPort.getCommPorts()
     val items = ports.map { it.systemPortName }
     var expanded by remember { mutableStateOf(false) }
@@ -22,7 +22,10 @@ fun SerialPortSelector(onChange: (String?) -> Unit) {
         modifier = Modifier
             .wrapContentSize(Alignment.TopStart)
     ) {
-        Button(onClick = { expanded = true }) {
+        Button(
+            enabled = !disabled,
+            onClick = { expanded = true }
+        ) {
             Text(text = ports.getOrNull(selected)?.portDescription ?: "usb порт")
         }
         DropdownMenu(

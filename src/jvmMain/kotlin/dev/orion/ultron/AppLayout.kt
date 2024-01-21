@@ -1,7 +1,12 @@
 package dev.orion.ultron
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -11,6 +16,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.orion.ultron.canvas.SchemaDrawer
+
+fun runCommands(arduino: Arduino, commands: Commands) {
+    commands.list.joinToString(separator = ";") { command ->
+        "x${command.position.x.toInt()}y${command.position.y.toInt()}"
+    }.let { arduino.sendMessage(it) }
+}
 
 @Composable
 fun AppLayout() {
@@ -23,23 +34,39 @@ fun AppLayout() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        AppControls(
-            arduino,
-            commands,
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 56.dp)
+        ) {
+            IconButton(
+                enabled = arduino.status.isConnected,
+                onClick = { runCommands(arduino, commands) }
+            ) {
+                Icon(
+                    imageVector = androidx.compose.material.icons.Icons.Default.PlayArrow,
+                    contentDescription = "Запустить"
+                )
+            }
+            ConnectionControls(
+                arduino,
+                commands,
+            )
+        }
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .fillMaxSize()
-                    .weight(20f)
+                    .background(color = MaterialTheme.colorScheme.background)
+                    .weight(2f)
             ) {
                 Text(text = "Команды:")
-                CommandsList(commands)
+                Column(modifier = Modifier.weight(1f)) {
+                    CommandsList(commands)
+                }
                 CommandEditor(commands)
             }
             Column(
@@ -64,8 +91,8 @@ fun AppLayout() {
 fun CommandEditor(commands: Commands) {
     val command = remember { mutableStateOf("") }
 
-    LaunchedEffect(commands.selected) {
-        commands.getSelected()?.let {
+    LaunchedEffect(commands.selectedIndex) {
+        commands.selected()?.let {
             command.value = it.description()
         }
     }

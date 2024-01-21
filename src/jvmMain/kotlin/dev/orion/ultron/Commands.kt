@@ -9,19 +9,27 @@ import kotlinx.coroutines.Dispatchers
 
 class Commands(private val notifications: NotificationsState) {
 
-    val selected by mutableStateOf<Int?>(null)
     val list: MutableList<Shape> = mutableStateListOf()
+    var selectedIndex by mutableStateOf<Int?>(null)
     private val scope = CoroutineScope(Dispatchers.Default)
+
+    fun selected(): Shape? {
+        if (list.isEmpty()) return null
+
+        return selectedIndex?.let { list[it] }
+    }
 
     fun add(point: Shape) {
         list.add(point)
     }
 
-    fun clear() = list.clear()
+    fun select(index: Int) {
+        if (index < 0 || index >= list.size || index == selectedIndex) return
 
-    fun getSelected(): Shape? = selected?.let { ix ->
-        return list[ix]
+        selectedIndex = index
     }
+
+    fun clear() = list.clear()
 
 }
 

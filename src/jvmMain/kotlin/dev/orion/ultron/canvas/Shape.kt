@@ -14,8 +14,6 @@ class Shape(private val offset: Offset) {
         get() = Offset(x = offset.x, y = offset.y)
 
     fun render(scope: DrawScope, prev: Shape?) {
-        println("render shape")
-
         renderPoint(scope)
 
         if (prev != null) renderEdge(scope, prev)

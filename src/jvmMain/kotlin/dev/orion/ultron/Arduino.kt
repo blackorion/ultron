@@ -1,14 +1,17 @@
 package dev.orion.ultron
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.fazecast.jSerialComm.SerialPort
 import com.fazecast.jSerialComm.SerialPortDataListener
 import com.fazecast.jSerialComm.SerialPortEvent
+import dev.orion.ultron.canvas.Shape
 
 class Arduino {
-    val status = mutableStateOf(ArduinoStatus())
-    val messages = mutableStateListOf<String>()
+    var status by mutableStateOf(ArduinoStatus())
+    var messages = mutableStateListOf<String>()
     private var arduino: SerialPort? = null
 
     fun connect(port: String, freq: Int = 9600): Boolean {
@@ -45,7 +48,7 @@ class Arduino {
             val connection = it.openPort()
 
             if (connection)
-                status.value = ArduinoStatus(isConnected = true, port)
+                status = ArduinoStatus(isConnected = true, port)
 
             return connection
         } ?: false
@@ -57,7 +60,7 @@ class Arduino {
 
     fun disconnect() {
         arduino?.closePort()
-        status.value = ArduinoStatus(false)
+        status = ArduinoStatus(false)
     }
 
     fun sendMessage(message: String) {
@@ -73,4 +76,5 @@ class Arduino {
     fun clearMessages() {
         messages.clear()
     }
+
 }
