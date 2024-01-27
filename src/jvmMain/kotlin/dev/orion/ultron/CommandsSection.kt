@@ -6,7 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +45,7 @@ fun CommandsSection(modifier: Modifier = Modifier, commands: Commands) {
         CommandsList(
             items = commands.list,
             selectedIndex = commands.selectedIndex ?: -1,
-            onItemClick = { commands.select(it) },
+            onAction = { commands.apply(it) },
             modifier = Modifier.weight(1f)
         )
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -61,29 +62,12 @@ fun CommandsSection(modifier: Modifier = Modifier, commands: Commands) {
 
 @Composable
 fun Actions(commands: Commands, onAction: (CommandAction) -> Unit, modifier: Modifier = Modifier) {
+
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        Row {
-            IconButton(onClick = { onAction(CommandAction.RemoveSelected) }) {
-                Icon(
-                    imageVector = Icons.Default.Clear, contentDescription = "Удалить"
-                )
-            }
-            IconButton(onClick = { onAction(CommandAction.MoveSelectionDown) }) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowDown, contentDescription = "Опустить"
-                )
-            }
-            IconButton(onClick = { onAction(CommandAction.MoveSelectionUp) }) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowUp, contentDescription = "Поднять"
-                )
-            }
-        }
-
         Row {
             IconButton(onClick = { commands.clear() }) {
                 Icon(

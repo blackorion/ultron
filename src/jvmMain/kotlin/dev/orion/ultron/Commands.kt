@@ -29,6 +29,26 @@ class Commands {
 
     fun apply(action: CommandAction) {
         when (action) {
+            is CommandAction.Add -> list.add(action.command)
+
+            is CommandAction.Delete -> list.remove(action.command)
+
+            is CommandAction.MoveUp -> list.indexOf(action.command).let { index ->
+                if (index <= 0) return@let
+
+                val removed = list.removeAt(index)
+                list.add(index - 1, removed)
+            }
+
+            is CommandAction.MoveDown -> list.indexOf(action.command).let { index ->
+                if (index >= list.size - 1) return@let
+
+                val removed = list.removeAt(index)
+                list.add(index + 1, removed)
+            }
+
+            is CommandAction.Select -> select(action.command)
+
             is CommandAction.MoveSelectionUp ->
                 selectedIndex?.let { index ->
                     if (index <= 0) return@let
@@ -45,8 +65,6 @@ class Commands {
                 list.add(index + 1, removed)
                 selectedIndex = index + 1
             }
-
-            is CommandAction.Add -> list.add(action.command)
 
             is CommandAction.RemoveSelected -> selectedIndex?.let { index ->
                 list.removeAt(index)
@@ -68,5 +86,9 @@ sealed interface CommandAction {
     object MoveSelectionUp : CommandAction
     object MoveSelectionDown : CommandAction
     object RemoveSelected : CommandAction
-    class Add(val command: Command) : CommandAction
+    data class Add(val command: Command) : CommandAction
+    data class Select(val command: Command) : CommandAction
+    data class MoveDown(val command: Command) : CommandAction
+    data class MoveUp(val command: Command) : CommandAction
+    data class Delete(val command: Command) : CommandAction
 }
