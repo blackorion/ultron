@@ -65,7 +65,7 @@ fun AppLayout() {
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    SchemaDrawer(commands)
+                    SchemaDrawer(commands = commands)
                 }
             }
         }
