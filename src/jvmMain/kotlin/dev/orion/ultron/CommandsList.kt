@@ -15,11 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.orion.ultron.canvas.Shape
 
 @Composable
 fun CommandsList(
-    items: List<Shape>,
+    items: List<Command>,
     selectedIndex: Int,
     onItemClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier
@@ -45,7 +44,7 @@ fun CommandsList(
 }
 
 @Composable
-fun CommandItem(shape: Shape, selected: Boolean = false, onClick: () -> Unit = {}) {
+fun CommandItem(command: Command, selected: Boolean = false, onClick: () -> Unit = {}) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -60,7 +59,7 @@ fun CommandItem(shape: Shape, selected: Boolean = false, onClick: () -> Unit = {
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 8.dp),
-            text = shape.description(),
+            text = command.toString(),
             color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
         )
     }

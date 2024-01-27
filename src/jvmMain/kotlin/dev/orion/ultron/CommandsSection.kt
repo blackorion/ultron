@@ -1,15 +1,13 @@
 package dev.orion.ultron
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +23,7 @@ fun CommandEditor(commands: Commands) {
 
     LaunchedEffect(commands.selectedIndex) {
         commands.selected()?.let {
-            command.value = it.description()
+            command.value = it.toString()
         }
     }
 
@@ -49,27 +47,52 @@ fun CommandsSection(modifier: Modifier = Modifier, commands: Commands) {
             onItemClick = { commands.select(it) },
             modifier = Modifier.weight(1f)
         )
-        CommandEditor(commands)
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Actions(
+                commands,
+                onAction = { commands.apply(it) },
+                modifier = Modifier.fillMaxWidth()
+                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
+            )
+            CommandEditor(commands)
+        }
+    }
+}
 
-        Row(
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 4.dp)
-                .fillMaxWidth()
-        ) {
+@Composable
+fun Actions(commands: Commands, onAction: (CommandAction) -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Row {
+            IconButton(onClick = { onAction(CommandAction.RemoveSelected) }) {
+                Icon(
+                    imageVector = Icons.Default.Clear, contentDescription = "Удалить"
+                )
+            }
+            IconButton(onClick = { onAction(CommandAction.MoveSelectionDown) }) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown, contentDescription = "Опустить"
+                )
+            }
+            IconButton(onClick = { onAction(CommandAction.MoveSelectionUp) }) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowUp, contentDescription = "Поднять"
+                )
+            }
+        }
+
+        Row {
             IconButton(onClick = { commands.clear() }) {
                 Icon(
-                    imageVector = Icons.Default.PlayArrow, contentDescription = "Запустить"
+                    imageVector = Icons.Default.Refresh, contentDescription = "Обновить"
                 )
             }
             IconButton(onClick = { commands.clear() }) {
                 Icon(
                     imageVector = Icons.Default.Add, contentDescription = "Добавить"
-                )
-            }
-            IconButton(onClick = { commands.clear() }) {
-                Icon(
-                    imageVector = Icons.Default.Delete, contentDescription = "Очистить"
                 )
             }
         }

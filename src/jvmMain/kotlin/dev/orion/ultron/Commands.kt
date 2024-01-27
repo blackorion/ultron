@@ -1,26 +1,20 @@
 package dev.orion.ultron
 
 import androidx.compose.runtime.*
-import dev.orion.ultron.canvas.Shape
-import dev.orion.ultron.notifications.Notifications
-import dev.orion.ultron.notifications.NotificationsState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
-class Commands(private val notifications: NotificationsState) {
+class Commands {
 
-    val list: MutableList<Shape> = mutableStateListOf()
+    val list = mutableStateListOf<Command>()
     var selectedIndex by mutableStateOf<Int?>(null)
-    private val scope = CoroutineScope(Dispatchers.Default)
 
-    fun selected(): Shape? {
+    fun selected(): Command? {
         if (list.isEmpty()) return null
 
         return selectedIndex?.let { list[it] }
     }
 
-    fun add(point: Shape) {
-        list.add(point)
+    fun add(command: Command) {
+        list.add(command)
     }
 
     fun select(index: Int) {
@@ -29,13 +23,50 @@ class Commands(private val notifications: NotificationsState) {
         selectedIndex = index
     }
 
+    fun select(command: Command) = select(list.indexOf(command))
+
     fun clear() = list.clear()
+
+    fun apply(action: CommandAction) {
+        when (action) {
+            is CommandAction.MoveSelectionUp ->
+                selectedIndex?.let { index ->
+                    if (index <= 0) return@let
+
+                    val removed = list.removeAt(index)
+                    list.add(index - 1, removed)
+                    selectedIndex = index - 1
+                }
+
+            is CommandAction.MoveSelectionDown -> selectedIndex?.let { index ->
+                if (index >= list.size - 1) return@let
+
+                val removed = list.removeAt(index)
+                list.add(index + 1, removed)
+                selectedIndex = index + 1
+            }
+
+            is CommandAction.Add -> list.add(action.command)
+
+            is CommandAction.RemoveSelected -> selectedIndex?.let { index ->
+                list.removeAt(index)
+                selectedIndex = null
+            }
+        }
+    }
+
+    fun clearSelection() {
+        selectedIndex = null
+    }
 
 }
 
 @Composable
-fun rememberCommands(): Commands {
-    val notifications = Notifications.current
+fun rememberCommands(): Commands = remember { Commands() }
 
-    return remember { Commands(notifications) }
+sealed interface CommandAction {
+    object MoveSelectionUp : CommandAction
+    object MoveSelectionDown : CommandAction
+    object RemoveSelected : CommandAction
+    class Add(val command: Command) : CommandAction
 }
