@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 
 val canvasColor = Color.White
 val canvasSize = 400.dp
@@ -40,7 +41,38 @@ fun CanvasBoard(canvasState: CanvasState) {
                 canvasState.onMouseMove(it)
             }
         ) {
-            drawRect(size = Size(canvasSize.toPx(), canvasSize.toPx()), color = canvasColor)
+            val borderWidthPx = 1.dp.toPx()
+            drawRect(
+                size = Size(canvasSize.toPx(), canvasSize.toPx()),
+                color = canvasColor,
+                style = Stroke(borderWidthPx)
+            )
+
+            val verticalStrokes = (canvasSize.toPx() / 100).roundToInt()
+
+            repeat(verticalStrokes) { ix ->
+                val start = ix * 100f
+                drawLine(
+                    start = Offset(start, 0f),
+                    end = Offset(start, canvasSize.toPx()),
+                    color = Color.LightGray,
+                    alpha = 0.5f,
+                    strokeWidth = borderWidthPx
+                )
+            }
+
+            val horizontalStrokes = (canvasSize.toPx() / 100).roundToInt()
+
+            repeat(horizontalStrokes) { ix ->
+                val start = ix * 100f
+                drawLine(
+                    start = Offset(0f, start),
+                    end = Offset(canvasSize.toPx(), start),
+                    color = Color.LightGray,
+                    alpha = 0.5f,
+                    strokeWidth = borderWidthPx
+                )
+            }
 
             drawPath(commandsPath, color = Color.Black, style = Stroke(2f))
 
