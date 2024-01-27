@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CanvasState(private val commands: Commands) {
+
     private val scope = CoroutineScope(Dispatchers.Default)
     private var handler: CanvasEventHandler by mutableStateOf(IdleCanvasEventHandler(this))
     private var mousePosition by mutableStateOf(Offset.Zero)
@@ -34,6 +35,14 @@ class CanvasState(private val commands: Commands) {
             }
 
             return p
+        }
+
+    val points: List<Offset>
+        get() = commands.list.mapNotNull { command ->
+            when (command) {
+                is Command.Point -> Offset(command.x, command.y)
+                else -> null
+            }
         }
 
     fun apply(action: CanvasActions) {

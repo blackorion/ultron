@@ -28,6 +28,7 @@ fun CanvasBoard(canvasState: CanvasState) {
     var mousePointer by remember { mutableStateOf(Offset.Zero) }
     var inFocus by remember { mutableStateOf(false) }
     val commandsPath = canvasState.commandsPath
+    val points = canvasState.points
 
     Box {
         InternalCanvas(
@@ -42,6 +43,10 @@ fun CanvasBoard(canvasState: CanvasState) {
             drawRect(size = Size(canvasSize.toPx(), canvasSize.toPx()), color = canvasColor)
 
             drawPath(commandsPath, color = Color.Black, style = Stroke(2f))
+
+            points.forEach {
+                drawCircle(color = Color.Black, radius = 4f, center = it)
+            }
         }
 
         if (inFocus)
