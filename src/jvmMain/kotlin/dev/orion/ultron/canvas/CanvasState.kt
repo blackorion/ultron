@@ -81,10 +81,14 @@ class CanvasState(private val commands: Commands) {
     }
 
     fun resetHandler() {
-        handler = IdleCanvasEventHandler(this)
+        val item = this
+
+        scope.launch {
+            handler = IdleCanvasEventHandler(item)
+        }
     }
 
-    fun clear() {
+    fun clear() = scope.launch {
         commands.clear()
     }
 

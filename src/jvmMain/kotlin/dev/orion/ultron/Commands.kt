@@ -42,6 +42,8 @@ class Commands {
 
                 val removed = list.removeAt(index)
                 list.add(index - 1, removed)
+
+                if (selectedIndex == index) selectedIndex = index - 1
             }
 
             is CommandAction.MoveDown -> list.indexOf(action.command).let { index ->
@@ -49,6 +51,8 @@ class Commands {
 
                 val removed = list.removeAt(index)
                 list.add(index + 1, removed)
+
+                if (selectedIndex == index) selectedIndex = index + 1
             }
 
             is CommandAction.Select -> select(action.command)

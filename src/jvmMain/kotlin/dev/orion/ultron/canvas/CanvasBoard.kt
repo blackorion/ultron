@@ -76,11 +76,10 @@ fun InternalCanvas(
             .clickable(
                 onClick = onClick,
                 indication = null,
-                interactionSource = intersectionSource
+                interactionSource = intersectionSource,
             )
             .onPointerEvent(PointerEventType.Move) {
-                val position = it.changes.first().position
-                onMove(position)
+                onMove(it.changes.first().position)
             }
             .onPointerEvent(PointerEventType.Enter) {
                 onFocus()
