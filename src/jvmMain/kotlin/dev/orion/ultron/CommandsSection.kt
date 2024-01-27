@@ -37,6 +37,11 @@ fun CommandsSection(modifier: Modifier = Modifier, commands: Commands) {
         Column(modifier = Modifier.fillMaxWidth()) {
             var command by remember { mutableStateOf("") }
 
+            val isValid by derivedStateOf {
+                if (command.isEmpty()) true
+                else Command.isValid(command)
+            }
+
             LaunchedEffect(commands.selectedIndex) {
                 commands.selected()?.let {
                     command = it.toString()
@@ -49,7 +54,7 @@ fun CommandsSection(modifier: Modifier = Modifier, commands: Commands) {
                 modifier = Modifier.fillMaxWidth()
                     .background(color = MaterialTheme.colorScheme.surfaceVariant)
             )
-            CommandEditor(command = command, onChange = { command = it }, onDone = {
+            CommandEditor(command = command, onChange = { command = it }, isValid = isValid, onDone = {
                 Command.parse(command)?.let { commands.apply(CommandAction.Add(it)) }
                 command = ""
             })
@@ -59,7 +64,13 @@ fun CommandsSection(modifier: Modifier = Modifier, commands: Commands) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun CommandEditor(modifier: Modifier = Modifier, command: String, onChange: (String) -> Unit, onDone: () -> Unit) {
+fun CommandEditor(
+    modifier: Modifier = Modifier,
+    command: String,
+    isValid: Boolean,
+    onChange: (String) -> Unit,
+    onDone: () -> Unit
+) {
     val (focusRequester) = FocusRequester.createRefs()
 
     TextField(
@@ -69,6 +80,7 @@ fun CommandEditor(modifier: Modifier = Modifier, command: String, onChange: (Str
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = { focusRequester.requestFocus() }),
+        isError = !isValid,
         modifier = modifier
             .fillMaxWidth()
             .onKeyEvent {
