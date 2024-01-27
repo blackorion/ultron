@@ -31,6 +31,10 @@ class Commands {
         when (action) {
             is CommandAction.Add -> list.add(action.command)
 
+            is CommandAction.UpdateSelected -> selectedIndex?.let { index ->
+                list[index] = action.command
+            }
+
             is CommandAction.Delete -> list.remove(action.command)
 
             is CommandAction.MoveUp -> list.indexOf(action.command).let { index ->
@@ -86,9 +90,11 @@ sealed interface CommandAction {
     object MoveSelectionUp : CommandAction
     object MoveSelectionDown : CommandAction
     object RemoveSelected : CommandAction
+
     data class Add(val command: Command) : CommandAction
     data class Select(val command: Command) : CommandAction
     data class MoveDown(val command: Command) : CommandAction
     data class MoveUp(val command: Command) : CommandAction
     data class Delete(val command: Command) : CommandAction
+    data class UpdateSelected(val command: Command) : CommandAction
 }
