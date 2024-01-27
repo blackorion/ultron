@@ -2,6 +2,7 @@ package dev.orion.ultron.canvas
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Path
 import dev.orion.ultron.Command
 import dev.orion.ultron.Commands
@@ -27,10 +28,32 @@ class CanvasState(private val commands: Commands) {
                 }
             }
 
-            list.forEach { command ->
+            list.forEachIndexed { ix, command ->
                 when (command) {
                     is Command.Point -> p.lineTo(command.x, command.y)
-                    else -> {}
+                    is Command.CubicBezier -> p.cubicTo(
+                        command.a.x,
+                        command.a.y,
+                        command.b.x,
+                        command.b.y,
+                        command.d.x,
+                        command.d.y
+                    )
+
+                    is Command.Arc -> {
+                        val prev = list[ix - 1]
+
+                        p.addArc(
+                            Rect(
+                                prev.destination().x,
+                                prev.destination().y + command.radius,
+                                command.p.x,
+                                command.p.y + command.radius
+                            ),
+                            command.startAngle,
+                            command.sweepAngle,
+                        )
+                    }
                 }
             }
 
@@ -38,10 +61,11 @@ class CanvasState(private val commands: Commands) {
         }
 
     val points: List<Offset>
-        get() = commands.list.mapNotNull { command ->
+        get() = commands.list.map { command ->
             when (command) {
                 is Command.Point -> Offset(command.x, command.y)
-                else -> null
+                is Command.CubicBezier -> Offset(command.d.x, command.d.y)
+                is Command.Arc -> Offset(command.p.x, command.p.y)
             }
         }
 
