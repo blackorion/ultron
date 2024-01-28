@@ -94,9 +94,10 @@ sealed interface Command {
         }
 
         fun parse(value: String): Command? {
-            val floatValue = "-?\\d+(\\.\\d+)?"
-            val coords = "x${floatValue}y${floatValue}"
-            val arcRegexp = Regex("[aA]?${coords}r${floatValue}u${floatValue}o${floatValue}")
+            val unsignedFloatValue = "\\d+(\\.\\d+)?"
+            val floatValue = "-?$unsignedFloatValue"
+            val coords = "x${unsignedFloatValue}y${unsignedFloatValue}"
+            val arcRegexp = Regex("[aA]?${coords}r${unsignedFloatValue}u${floatValue}o${floatValue}")
             val pointRegexp = Regex("[mM]?${coords}")
             val bezierRegexp = Regex("[cC]?${coords} $coords $coords")
 

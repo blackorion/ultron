@@ -3,7 +3,6 @@ package dev.orion.ultron.canvas
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.orion.ultron.Commands
@@ -14,10 +13,9 @@ fun SchemaDrawer(modifier: Modifier = Modifier, commands: Commands) {
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.End,
-        modifier = modifier.fillMaxHeight(),
+        modifier = modifier.fillMaxSize(),
     ) {
-        CanvasBoard(canvasState = state)
+        CanvasBoard(modifier = Modifier.weight(1f), canvasState = state)
 
         Row(
             horizontalArrangement = Arrangement.End,

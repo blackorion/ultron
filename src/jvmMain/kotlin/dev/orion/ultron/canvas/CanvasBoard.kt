@@ -6,13 +6,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -22,17 +23,21 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
-val canvasColor = Color.White
 val canvasSize = 400.dp
 
 @Composable
-fun CanvasBoard(canvasState: CanvasState) {
+fun CanvasBoard(modifier: Modifier = Modifier, canvasState: CanvasState) {
     var mousePointer by remember { mutableStateOf(Offset.Zero) }
     var inFocus by remember { mutableStateOf(false) }
     val commandsPath = canvasState.commandsPath
     val points = canvasState.points
 
-    Box {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background)
+            .clipToBounds()
+    ) {
         InternalCanvas(
             onClick = { canvasState.onClick() },
             onFocus = { inFocus = true },
@@ -76,8 +81,7 @@ fun InternalCanvas(
 
     Canvas(
         modifier = modifier
-            .size(canvasSize)
-            .background(canvasColor)
+            .fillMaxSize()
             .clickable(
                 onClick = onClick,
                 indication = null,
@@ -94,32 +98,36 @@ fun InternalCanvas(
             },
         onDraw = {
             val borderWidthPx = 1.dp.toPx()
+
             drawRect(
-                size = Size(canvasSize.toPx(), canvasSize.toPx()),
-                color = canvasColor,
+                color = Color.LightGray,
+                topLeft = Offset(0f, 0f),
+                size = size,
                 style = Stroke(borderWidthPx)
             )
 
-            val verticalStrokes = (canvasSize.toPx() / 100).roundToInt()
+            val vNum = (size.width / 100).toInt()
+            val verticalStrokes = if (size.width % vNum > 0) vNum + 1 else vNum
 
             repeat(verticalStrokes) { ix ->
                 val start = ix * 100f
                 drawLine(
                     start = Offset(start, 0f),
-                    end = Offset(start, canvasSize.toPx()),
+                    end = Offset(start, size.height),
                     color = Color.LightGray,
                     alpha = 0.5f,
                     strokeWidth = borderWidthPx
                 )
             }
 
-            val horizontalStrokes = (canvasSize.toPx() / 100).roundToInt()
+            val hNum = (size.height / 100).toInt()
+            val horizontalStrokes = if (size.height % hNum > 0) hNum + 1 else hNum
 
             repeat(horizontalStrokes) { ix ->
                 val start = ix * 100f
                 drawLine(
                     start = Offset(0f, start),
-                    end = Offset(canvasSize.toPx(), start),
+                    end = Offset(size.width, start),
                     color = Color.LightGray,
                     alpha = 0.5f,
                     strokeWidth = borderWidthPx
