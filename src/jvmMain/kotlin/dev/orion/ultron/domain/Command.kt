@@ -1,7 +1,6 @@
-package dev.orion.ultron
+package dev.orion.ultron.domain
 
 import androidx.compose.ui.geometry.Offset
-import dev.orion.ultron.canvas.HitBox
 
 sealed interface Command {
 

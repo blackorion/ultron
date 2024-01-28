@@ -1,14 +1,14 @@
-package dev.orion.ultron.canvas
+package dev.orion.ultron.ui.canvas
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.orion.ultron.Commands
+import dev.orion.ultron.domain.CommandsList
 
 @Composable
-fun SchemaDrawer(modifier: Modifier = Modifier, commands: Commands) {
+fun SchemaDrawer(modifier: Modifier = Modifier, commands: CommandsList) {
     val state = rememberSchemaState(commands)
 
     Column(
@@ -29,5 +29,5 @@ fun SchemaDrawer(modifier: Modifier = Modifier, commands: Commands) {
 @Preview
 @Composable
 fun SchemaDrawerPreview() {
-    SchemaDrawer(commands = Commands())
+    SchemaDrawer(commands = CommandsList())
 }

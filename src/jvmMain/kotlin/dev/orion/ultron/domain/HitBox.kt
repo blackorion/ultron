@@ -1,4 +1,4 @@
-package dev.orion.ultron.canvas
+package dev.orion.ultron.domain
 
 import androidx.compose.ui.geometry.Offset
 

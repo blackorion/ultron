@@ -7,8 +7,9 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import dev.orion.ultron.notifications.NotificationsContainer
-import dev.orion.ultron.notifications.NotificationsProvider
+import dev.orion.ultron.ui.notifications.NotificationsContainer
+import dev.orion.ultron.ui.notifications.NotificationsProvider
+import dev.orion.ultron.ui.AppLayout
 
 fun main() = application {
     Window(

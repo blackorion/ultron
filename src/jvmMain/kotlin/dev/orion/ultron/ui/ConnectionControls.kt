@@ -1,4 +1,4 @@
-package dev.orion.ultron
+package dev.orion.ultron.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -8,11 +8,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
-import dev.orion.ultron.canvas.SerialPortSelector
+import dev.orion.ultron.domain.Arduino
 
 @Composable
 fun ConnectionControls(
-    arduino: Arduino, commands: Commands,
+    arduino: Arduino,
 ) {
     var port by remember { mutableStateOf<String?>(null) }
 

@@ -1,4 +1,4 @@
-package dev.orion.ultron.canvas
+package dev.orion.ultron.ui.canvas
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background

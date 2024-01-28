@@ -1,4 +1,4 @@
-package dev.orion.ultron
+package dev.orion.ultron.domain
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import com.fazecast.jSerialComm.SerialPort
 import com.fazecast.jSerialComm.SerialPortDataListener
 import com.fazecast.jSerialComm.SerialPortEvent
-import dev.orion.ultron.canvas.Shape
+import dev.orion.ultron.ui.ArduinoStatus
 
 class Arduino {
     var status by mutableStateOf(ArduinoStatus())

@@ -1,4 +1,4 @@
-package dev.orion.ultron.notifications
+package dev.orion.ultron.ui.notifications
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider

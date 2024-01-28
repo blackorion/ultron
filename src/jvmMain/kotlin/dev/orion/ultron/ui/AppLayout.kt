@@ -1,4 +1,4 @@
-package dev.orion.ultron
+package dev.orion.ultron.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,9 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.orion.ultron.canvas.SchemaDrawer
+import dev.orion.ultron.domain.Arduino
+import dev.orion.ultron.domain.CommandsList
+import dev.orion.ultron.domain.rememberCommands
+import dev.orion.ultron.ui.canvas.SchemaDrawer
 
-fun runCommands(arduino: Arduino, commands: Commands) {
+fun runCommands(arduino: Arduino, commands: CommandsList) {
     commands.list.joinToString(separator = ";") { it.toString() }.let { arduino.sendMessage("$it;") }
 }
 
@@ -40,10 +43,7 @@ fun AppLayout() {
                     contentDescription = "Запустить"
                 )
             }
-            ConnectionControls(
-                arduino,
-                commands,
-            )
+            ConnectionControls(arduino)
         }
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),

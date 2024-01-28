@@ -1,4 +1,4 @@
-package dev.orion.ultron
+package dev.orion.ultron.ui
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
@@ -20,6 +20,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
+import dev.orion.ultron.domain.Arduino
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable

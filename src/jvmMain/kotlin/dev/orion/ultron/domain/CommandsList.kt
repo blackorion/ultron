@@ -1,8 +1,10 @@
-package dev.orion.ultron
+@file:JvmName("CommandsListKt")
+
+package dev.orion.ultron.domain
 
 import androidx.compose.runtime.*
 
-class Commands {
+class CommandsList {
 
     val list = mutableStateListOf<Command>()
     var selectedIndex by mutableStateOf<Int?>(null)
@@ -57,7 +59,7 @@ class Commands {
 
             is CommandAction.Select -> select(action.command)
 
-            is CommandAction.MoveSelectionUp ->
+            is CommandAction.Selection.MoveUp ->
                 selectedIndex?.let { index ->
                     if (index <= 0) return@let
 
@@ -66,7 +68,7 @@ class Commands {
                     selectedIndex = index - 1
                 }
 
-            is CommandAction.MoveSelectionDown -> selectedIndex?.let { index ->
+            is CommandAction.Selection.MoveDown -> selectedIndex?.let { index ->
                 if (index >= list.size - 1) return@let
 
                 val removed = list.removeAt(index)
@@ -74,7 +76,7 @@ class Commands {
                 selectedIndex = index + 1
             }
 
-            is CommandAction.RemoveSelected -> selectedIndex?.let { index ->
+            is CommandAction.Selection.Remove -> selectedIndex?.let { index ->
                 list.removeAt(index)
                 selectedIndex = null
             }
@@ -88,12 +90,15 @@ class Commands {
 }
 
 @Composable
-fun rememberCommands(): Commands = remember { Commands() }
+fun rememberCommands(): CommandsList = remember { CommandsList() }
 
 sealed interface CommandAction {
-    object MoveSelectionUp : CommandAction
-    object MoveSelectionDown : CommandAction
-    object RemoveSelected : CommandAction
+
+    sealed interface Selection : CommandAction {
+        object MoveUp : Selection
+        object MoveDown : Selection
+        object Remove : Selection
+    }
 
     data class Add(val command: Command) : CommandAction
     data class Select(val command: Command) : CommandAction

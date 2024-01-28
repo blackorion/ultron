@@ -1,16 +1,17 @@
-package dev.orion.ultron.canvas
+package dev.orion.ultron.ui.canvas
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Path
-import dev.orion.ultron.Command
-import dev.orion.ultron.Commands
+import dev.orion.ultron.domain.Command
+import dev.orion.ultron.domain.CommandsList
+import dev.orion.ultron.domain.HitBox
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CanvasState(private val commands: Commands) {
+class CanvasState(private val commands: CommandsList) {
 
     private val scope = CoroutineScope(Dispatchers.Default)
     private var handler: CanvasEventHandler by mutableStateOf(IdleCanvasEventHandler(this))
@@ -114,7 +115,7 @@ class CanvasState(private val commands: Commands) {
         commands.clear()
     }
 
-    fun copy(commands: Commands): CanvasState {
+    fun copy(commands: CommandsList): CanvasState {
         val state = CanvasState(commands)
         state.handler = handler
 
@@ -123,7 +124,7 @@ class CanvasState(private val commands: Commands) {
 }
 
 @Composable
-fun rememberSchemaState(commands: Commands): CanvasState {
+fun rememberSchemaState(commands: CommandsList): CanvasState {
     var s by remember(commands) { mutableStateOf(CanvasState(commands)) }
 
     LaunchedEffect(commands.list.toList()) {

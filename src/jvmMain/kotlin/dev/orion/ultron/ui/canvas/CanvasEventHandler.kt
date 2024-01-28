@@ -1,6 +1,7 @@
-package dev.orion.ultron.canvas
+package dev.orion.ultron.ui.canvas
 
 import androidx.compose.ui.geometry.Offset
+import dev.orion.ultron.domain.HitBox
 
 interface CanvasEventHandler {
     fun init()

@@ -1,4 +1,4 @@
-package dev.orion.ultron
+package dev.orion.ultron.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,9 +21,12 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import dev.orion.ultron.domain.Command
+import dev.orion.ultron.domain.CommandAction
+import dev.orion.ultron.domain.CommandsList
 
 @Composable
-fun CommandsSection(modifier: Modifier = Modifier, commands: Commands) {
+fun CommandsSection(modifier: Modifier = Modifier, commands: CommandsList) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp), modifier = modifier
     ) {
