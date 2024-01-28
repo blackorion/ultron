@@ -15,6 +15,8 @@ class CommandsList {
         return selectedIndex?.let { list[it] }
     }
 
+    fun isSelected(command: Command): Boolean = selectedIndex?.let { list[it] == command } ?: false
+
     fun add(command: Command) {
         list.add(command)
     }
@@ -37,7 +39,12 @@ class CommandsList {
                 list[index] = action.command
             }
 
-            is CommandAction.Delete -> list.remove(action.command)
+            is CommandAction.Delete -> {
+                if (isSelected(action.command))
+                    clearSelection()
+
+                list.remove(action.command)
+            }
 
             is CommandAction.MoveUp -> list.indexOf(action.command).let { index ->
                 if (index <= 0) return@let
