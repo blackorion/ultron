@@ -41,14 +41,15 @@ class CanvasState(private val commands: Commands) {
                     )
 
                     is Command.Arc -> {
-                        val prev = list[ix - 1]
+                        if (ix != 0)
+                            p.lineTo(command.start().x, command.start().y)
 
                         p.addArc(
                             Rect(
-                                prev.destination().x,
-                                prev.destination().y + command.radius,
-                                command.p.x,
-                                command.p.y + command.radius
+                                command.p.x - command.radius,
+                                command.p.y - command.radius,
+                                command.p.x + command.radius,
+                                command.p.y + command.radius,
                             ),
                             command.startAngle,
                             command.sweepAngle,
@@ -61,11 +62,14 @@ class CanvasState(private val commands: Commands) {
         }
 
     val points: List<Offset>
-        get() = commands.list.map { command ->
+        get() = commands.list.flatMap { command ->
             when (command) {
-                is Command.Point -> Offset(command.x, command.y)
-                is Command.CubicBezier -> Offset(command.d.x, command.d.y)
-                is Command.Arc -> Offset(command.p.x, command.p.y)
+                is Command.Point -> listOf(command.destination().toOffset())
+                is Command.CubicBezier -> listOf(command.destination().toOffset())
+                is Command.Arc -> listOf(
+                    command.start().toOffset(),
+                    command.end().toOffset(),
+                )
             }
         }
 
