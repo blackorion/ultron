@@ -13,7 +13,7 @@ import com.fazecast.jSerialComm.SerialPort
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SerialPortSelector(onChange: (String?) -> Unit, disabled: Boolean = false) {
+fun SerialPortSelector(enabled: Boolean = true, onChange: (String?) -> Unit) {
     val ports = SerialPort.getCommPorts()
     val items = ports.map { it.systemPortName }
     var expanded by remember { mutableStateOf(false) }
@@ -22,10 +22,11 @@ fun SerialPortSelector(onChange: (String?) -> Unit, disabled: Boolean = false) {
     Box(
         modifier = Modifier.wrapContentSize(Alignment.TopStart)
     ) {
-        TextField(enabled = !disabled,
+        TextField(
             value = ports.getOrNull(selected)?.portDescription ?: "usb порт",
             onValueChange = {},
             placeholder = { Text("usb порт") },
+            enabled = enabled,
             readOnly = true,
             singleLine = true,
             trailingIcon = {

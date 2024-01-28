@@ -46,6 +46,7 @@ fun AppLayout() {
                     .width(400.dp)
             )
             ApplicationConfigSection(
+                arduino = arduino,
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(2f)

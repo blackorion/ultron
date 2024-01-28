@@ -9,9 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.orion.ultron.domain.Arduino
 
 @Composable
-fun ApplicationConfigSection(modifier: Modifier = Modifier) {
+fun ApplicationConfigSection(modifier: Modifier = Modifier, arduino: Arduino) {
     val config = ApplicationConfig.current
 
     if (!config.isOpen) return
@@ -23,7 +24,7 @@ fun ApplicationConfigSection(modifier: Modifier = Modifier) {
             .background(MaterialTheme.colorScheme.background)
             .padding(8.dp)
     ) {
-        SerialPortSelector(onChange = { config.port = it })
-        FrequencySelector(value = config.freq, onChange = { config.freq = it })
+        SerialPortSelector(enabled = !arduino.status.isConnected, onChange = { config.port = it })
+        FrequencySelector(value = config.freq, onChange = { config.freq = it }, enabled = !arduino.status.isConnected)
     }
 }

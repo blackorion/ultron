@@ -8,11 +8,17 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FrequencySelector(modifier: Modifier = Modifier, value: String, onChange: (String) -> Unit) {
+fun FrequencySelector(
+    modifier: Modifier = Modifier,
+    value: String,
+    onChange: (String) -> Unit,
+    enabled: Boolean = true
+) {
     TextField(
         modifier = modifier,
         value = value,
         onValueChange = onChange,
         placeholder = { Text("частота") },
+        enabled = enabled
     )
 }
