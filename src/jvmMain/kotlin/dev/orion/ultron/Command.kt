@@ -7,6 +7,7 @@ sealed interface Command {
 
     fun isIn(hitBox: HitBox): Boolean
     fun destination(): Point
+    fun toListOfOffsets(): List<Offset> = listOf(destination().toOffset())
 
     data class Point(val x: Float, val y: Float) : Command {
         override fun isIn(hitBox: HitBox): Boolean = hitBox.contains(toOffset())
@@ -33,29 +34,34 @@ sealed interface Command {
     }
 
     data class Arc(val p: Point, val radius: Float, val startAngle: Float, val sweepAngle: Float) : Command {
-        override fun isIn(hitBox: HitBox): Boolean = p.isIn(hitBox)
+        val start: Point
+            get() {
+                val x = p.x + radius * kotlin.math.cos(degToRad(startAngle))
+                val y = p.y + radius * kotlin.math.sin(degToRad(startAngle))
+
+                return Point(x, y)
+            }
+
+        val end: Point
+            get() {
+                val x = p.x + radius * kotlin.math.cos(degToRad(startAngle + sweepAngle))
+                val y = p.y + radius * kotlin.math.sin(degToRad(startAngle + sweepAngle))
+
+                return Point(x, y)
+            }
+
+        override fun isIn(hitBox: HitBox): Boolean = start.isIn(hitBox) || end.isIn(hitBox)
 
         override fun destination(): Point = p
 
-        fun start(): Point {
-            val x = p.x + radius * kotlin.math.cos(degToRad(startAngle))
-            val y = p.y + radius * kotlin.math.sin(degToRad(startAngle))
-
-            return Point(x, y)
-        }
-
-        fun end(): Point {
-            val x = p.x + radius * kotlin.math.cos(degToRad(startAngle + sweepAngle))
-            val y = p.y + radius * kotlin.math.sin(degToRad(startAngle + sweepAngle))
-
-            return Point(x, y)
-        }
-
-        private fun degToRad(deg: Float): Float {
-            return deg * kotlin.math.PI.toFloat() / 180f
-        }
+        private fun degToRad(deg: Float): Float = deg * kotlin.math.PI.toFloat() / 180f
 
         override fun toString(): String = "${p}r${radius}u${startAngle}o${sweepAngle}"
+
+        override fun toListOfOffsets(): List<Offset> = listOf(
+            start.toOffset(),
+            end.toOffset(),
+        )
     }
 
     companion object {

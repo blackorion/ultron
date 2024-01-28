@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -41,43 +42,15 @@ fun CanvasBoard(canvasState: CanvasState) {
                 canvasState.onMouseMove(it)
             }
         ) {
-            val borderWidthPx = 1.dp.toPx()
-            drawRect(
-                size = Size(canvasSize.toPx(), canvasSize.toPx()),
-                color = canvasColor,
-                style = Stroke(borderWidthPx)
-            )
-
-            val verticalStrokes = (canvasSize.toPx() / 100).roundToInt()
-
-            repeat(verticalStrokes) { ix ->
-                val start = ix * 100f
-                drawLine(
-                    start = Offset(start, 0f),
-                    end = Offset(start, canvasSize.toPx()),
-                    color = Color.LightGray,
-                    alpha = 0.5f,
-                    strokeWidth = borderWidthPx
-                )
-            }
-
-            val horizontalStrokes = (canvasSize.toPx() / 100).roundToInt()
-
-            repeat(horizontalStrokes) { ix ->
-                val start = ix * 100f
-                drawLine(
-                    start = Offset(0f, start),
-                    end = Offset(canvasSize.toPx(), start),
-                    color = Color.LightGray,
-                    alpha = 0.5f,
-                    strokeWidth = borderWidthPx
-                )
-            }
-
             drawPath(commandsPath, color = Color.Black, style = Stroke(2f))
+            drawPoints(points, pointMode = PointMode.Points, color = Color.Black, strokeWidth = 8f)
 
-            points.forEach {
-                drawCircle(color = Color.Black, radius = 4f, center = it)
+            canvasState.selectedPoints.forEach { point ->
+                drawCircle(
+                    color = Color.Red,
+                    radius = 8f,
+                    center = point,
+                )
             }
         }
 
@@ -119,6 +92,41 @@ fun InternalCanvas(
             .onPointerEvent(PointerEventType.Exit) {
                 onBlur()
             },
-        onDraw
+        onDraw = {
+            val borderWidthPx = 1.dp.toPx()
+            drawRect(
+                size = Size(canvasSize.toPx(), canvasSize.toPx()),
+                color = canvasColor,
+                style = Stroke(borderWidthPx)
+            )
+
+            val verticalStrokes = (canvasSize.toPx() / 100).roundToInt()
+
+            repeat(verticalStrokes) { ix ->
+                val start = ix * 100f
+                drawLine(
+                    start = Offset(start, 0f),
+                    end = Offset(start, canvasSize.toPx()),
+                    color = Color.LightGray,
+                    alpha = 0.5f,
+                    strokeWidth = borderWidthPx
+                )
+            }
+
+            val horizontalStrokes = (canvasSize.toPx() / 100).roundToInt()
+
+            repeat(horizontalStrokes) { ix ->
+                val start = ix * 100f
+                drawLine(
+                    start = Offset(0f, start),
+                    end = Offset(canvasSize.toPx(), start),
+                    color = Color.LightGray,
+                    alpha = 0.5f,
+                    strokeWidth = borderWidthPx
+                )
+            }
+
+            onDraw()
+        }
     )
 }

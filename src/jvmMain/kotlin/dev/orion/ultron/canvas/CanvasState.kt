@@ -16,6 +16,9 @@ class CanvasState(private val commands: Commands) {
     private var handler: CanvasEventHandler by mutableStateOf(IdleCanvasEventHandler(this))
     private var mousePosition by mutableStateOf(Offset.Zero)
 
+    val selectedPoints: List<Offset>
+        get() = commands.selected()?.toListOfOffsets() ?: emptyList()
+
     val commandsPath: Path
         get() {
             val p = Path()
@@ -42,7 +45,7 @@ class CanvasState(private val commands: Commands) {
 
                     is Command.Arc -> {
                         if (ix != 0)
-                            p.lineTo(command.start().x, command.start().y)
+                            p.lineTo(command.start.x, command.start.y)
 
                         p.addArc(
                             Rect(
@@ -62,16 +65,7 @@ class CanvasState(private val commands: Commands) {
         }
 
     val points: List<Offset>
-        get() = commands.list.flatMap { command ->
-            when (command) {
-                is Command.Point -> listOf(command.destination().toOffset())
-                is Command.CubicBezier -> listOf(command.destination().toOffset())
-                is Command.Arc -> listOf(
-                    command.start().toOffset(),
-                    command.end().toOffset(),
-                )
-            }
-        }
+        get() = commands.list.flatMap(Command::toListOfOffsets)
 
     fun apply(action: CanvasActions) {
         when (action) {
