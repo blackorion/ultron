@@ -9,7 +9,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.SyncAlt
+import androidx.compose.material.icons.filled.Upgrade
+import androidx.compose.material.icons.filled.VerticalAlignBottom
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -54,7 +56,8 @@ fun CommandsSection(modifier: Modifier = Modifier, commands: CommandsList) {
             Actions(
                 command = command,
                 onAction = { commands.apply(it) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(color = MaterialTheme.colorScheme.surfaceVariant)
             )
             CommandEditor(command = command, onChange = { command = it }, isValid = isValid, onDone = {
@@ -100,14 +103,32 @@ fun CommandEditor(
 @Composable
 fun Actions(command: String, onAction: (CommandAction) -> Unit, modifier: Modifier = Modifier) {
     Row(
-        horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically, modifier = modifier
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
     ) {
+        Row {
+            IconButton(onClick = {
+                onAction(CommandAction.Add(Command.ToggleZAxis(-1)))
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.VerticalAlignBottom, contentDescription = "Z-1"
+                )
+            }
+            IconButton(onClick = {
+                onAction(CommandAction.Add(Command.ToggleZAxis(1)))
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.Upgrade, contentDescription = "Z1"
+                )
+            }
+        }
         Row {
             IconButton(onClick = {
                 Command.parse(command)?.let { onAction(CommandAction.UpdateSelected(it)) }
             }) {
                 Icon(
-                    imageVector = Icons.Default.Refresh, contentDescription = "Обновить"
+                    imageVector = Icons.Default.SyncAlt, contentDescription = "Обновить"
                 )
             }
             IconButton(onClick = {

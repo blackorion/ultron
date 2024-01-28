@@ -63,6 +63,14 @@ sealed interface Command {
         )
     }
 
+    data class ToggleZAxis(val z: Int) : Command {
+        override fun isIn(hitBox: HitBox): Boolean = false
+
+        override fun destination(): Point = Point(0f, 0f)
+
+        override fun toString(): String = "z${z}"
+    }
+
     companion object {
 
         private fun parsePoint(value: String): Point {
@@ -99,11 +107,13 @@ sealed interface Command {
             val arcRegexp = Regex("[aA]?${coords}r${unsignedFloatValue}u${floatValue}o${floatValue}")
             val pointRegexp = Regex("[mM]?${coords}")
             val bezierRegexp = Regex("[cC]?${coords} $coords $coords")
+            val toggleZAxisRegexp = Regex("[zZ]1|-1")
 
             return when {
                 arcRegexp.matches(value) -> parseArc(value)
                 pointRegexp.matches(value) -> parsePoint(value)
                 bezierRegexp.matches(value) -> parseCubicBezier(value)
+                toggleZAxisRegexp.matches(value) -> Point(0f, 0f)
                 else -> null
             }
         }

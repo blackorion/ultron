@@ -59,6 +59,8 @@ class CanvasState(private val commands: CommandsList) {
                             command.sweepAngle,
                         )
                     }
+
+                    is Command.ToggleZAxis -> {}
                 }
             }
 

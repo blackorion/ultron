@@ -23,9 +23,12 @@ kotlin {
     sourceSets {
         @OptIn(ExperimentalComposeLibrary::class) val jvmMain by getting {
             dependencies {
+                val composeVersion = "1.0.4"
+
                 implementation(compose.desktop.currentOs)
                 implementation(compose.material3)
-                implementation("org.jetbrains.compose.runtime:runtime:1.0.4")
+                implementation(compose.materialIconsExtended)
+                implementation("org.jetbrains.compose.runtime:runtime:$composeVersion")
                 implementation("com.fazecast:jSerialComm:[2.0.0,3.0.0)")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC2")
             }
