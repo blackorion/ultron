@@ -13,11 +13,11 @@ import com.fazecast.jSerialComm.SerialPort
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SerialPortSelector(enabled: Boolean = true, onChange: (String?) -> Unit) {
+fun SerialPortSelector(value: String?, onChange: (String?) -> Unit, enabled: Boolean = true) {
     val ports = SerialPort.getCommPorts()
     val items = ports.map { it.systemPortName }
     var expanded by remember { mutableStateOf(false) }
-    var selected by remember { mutableStateOf(-1) }
+    var selected by remember { mutableStateOf(items.indexOf(value)) }
 
     Box(
         modifier = Modifier.wrapContentSize(Alignment.TopStart)

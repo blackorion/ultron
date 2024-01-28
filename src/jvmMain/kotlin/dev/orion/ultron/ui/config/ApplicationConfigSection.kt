@@ -24,7 +24,7 @@ fun ApplicationConfigSection(modifier: Modifier = Modifier, arduino: Arduino) {
             .background(MaterialTheme.colorScheme.background)
             .padding(8.dp)
     ) {
-        SerialPortSelector(enabled = !arduino.status.isConnected, onChange = { config.port = it })
+        SerialPortSelector(enabled = !arduino.status.isConnected, value = config.port, onChange = { config.port = it })
         FrequencySelector(value = config.freq, onChange = { config.freq = it }, enabled = !arduino.status.isConnected)
     }
 }

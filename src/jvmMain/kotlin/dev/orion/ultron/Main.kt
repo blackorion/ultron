@@ -11,22 +11,27 @@ import dev.orion.ultron.ui.AppLayout
 import dev.orion.ultron.ui.config.ApplicationConfigProvider
 import dev.orion.ultron.ui.notifications.NotificationsContainer
 import dev.orion.ultron.ui.notifications.NotificationsProvider
+import java.util.prefs.Preferences
 
-fun main() = application {
-    Window(
-        title = "Ultron",
-        onCloseRequest = ::exitApplication,
-    ) {
-        MaterialTheme(
-            colorScheme = lightColorScheme(),
-            typography = MaterialTheme.typography,
-            shapes = MaterialTheme.shapes,
+fun main() {
+    val preferences = Preferences.userRoot().node("ultron")
+
+    application {
+        Window(
+            title = "Ultron",
+            onCloseRequest = ::exitApplication,
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                ApplicationConfigProvider {
-                    NotificationsProvider {
-                        AppLayout()
-                        NotificationsContainer()
+            MaterialTheme(
+                colorScheme = lightColorScheme(),
+                typography = MaterialTheme.typography,
+                shapes = MaterialTheme.shapes,
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    ApplicationConfigProvider(preferences) {
+                        NotificationsProvider {
+                            AppLayout()
+                            NotificationsContainer()
+                        }
                     }
                 }
             }
