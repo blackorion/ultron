@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import dev.orion.ultron.canvas.SchemaDrawer
 
 fun runCommands(arduino: Arduino, commands: Commands) {
-    commands.list.joinToString(separator = ";") { it.toString() }.let { arduino.sendMessage(it) }
+    commands.list.joinToString(separator = ";") { it.toString() }.let { arduino.sendMessage("$it;") }
 }
 
 @Composable
