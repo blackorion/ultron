@@ -2,22 +2,15 @@ package dev.orion.ultron.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.orion.ultron.domain.Arduino
-import dev.orion.ultron.domain.CommandsList
 import dev.orion.ultron.domain.rememberCommands
-import dev.orion.ultron.ui.canvas.SchemaDrawer
-
-fun runCommands(arduino: Arduino, commands: CommandsList) {
-    commands.list.joinToString(separator = ";") { it.toString() }.let { arduino.sendMessage("$it;") }
-}
+import dev.orion.ultron.ui.canvas.Schema
+import dev.orion.ultron.ui.config.ApplicationConfigSection
 
 @Composable
 fun AppLayout() {
@@ -30,44 +23,34 @@ fun AppLayout() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 56.dp)
-        ) {
-            IconButton(
-                enabled = arduino.status.isConnected,
-                onClick = { runCommands(arduino, commands) }
-            ) {
-                Icon(
-                    imageVector = androidx.compose.material.icons.Icons.Default.PlayArrow,
-                    contentDescription = "Запустить"
-                )
-            }
-            ConnectionControls(arduino)
-        }
+        HeaderControls(
+            arduino = arduino,
+            commands = commands,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxSize(),
         ) {
             CommandsSection(
-                modifier = Modifier.weight(2f)
+                commands = commands,
+                modifier = Modifier.weight(1f)
                     .fillMaxSize()
                     .background(color = MaterialTheme.colorScheme.background),
-                commands
             )
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+            Schema(
+                commands = commands,
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(400.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    SchemaDrawer(commands = commands)
-                }
-            }
+            )
+            ApplicationConfigSection(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(2f)
+                    .defaultMinSize(minWidth = 300.dp)
+            )
         }
     }
 }
