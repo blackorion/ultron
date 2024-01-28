@@ -107,7 +107,7 @@ sealed interface Command {
             val arcRegexp = Regex("[aA]?${coords}r${unsignedFloatValue}u${floatValue}o${floatValue}")
             val pointRegexp = Regex("[mM]?${coords}")
             val bezierRegexp = Regex("[cC]?${coords} $coords $coords")
-            val toggleZAxisRegexp = Regex("[zZ]1|-1")
+            val toggleZAxisRegexp = Regex("[zZ]$floatValue")
 
             return when {
                 arcRegexp.matches(value) -> parseArc(value)

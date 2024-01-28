@@ -90,7 +90,7 @@ fun CommandEditor(
         modifier = modifier
             .fillMaxWidth()
             .onKeyEvent {
-                if (it.key == Key.Enter) {
+                if (it.key == Key.Enter || it.key == Key.NumPadEnter) {
                     onDone()
                     true
                 } else {

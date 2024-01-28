@@ -7,9 +7,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material3.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.orion.ultron.domain.Arduino
 
@@ -31,15 +33,18 @@ fun ArduinoTerminal(arduino: Arduino) {
         modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
         Row {
-            TextField(value = message.value, onValueChange = {
-                message.value = it
-            }, modifier = Modifier.weight(1f).onKeyEvent {
-                if (it.key != Key.Enter) return@onKeyEvent false
+            TextField(
+                value = message.value,
+                onValueChange = { message.value = it },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                modifier = Modifier.weight(1f).onKeyEvent {
+                    if (it.key != Key.Enter && it.key != Key.NumPadEnter) return@onKeyEvent false
 
-                arduino.sendMessage(message.value)
-                message.value = ""
-                true
-            })
+                    arduino.sendMessage(message.value)
+                    message.value = ""
+                    true
+                })
 
             Column(modifier = Modifier.width(200.dp)) {
                 IconButton(onClick = {
