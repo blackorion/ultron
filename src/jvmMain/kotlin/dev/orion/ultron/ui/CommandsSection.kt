@@ -28,7 +28,7 @@ import dev.orion.ultron.domain.CommandAction
 import dev.orion.ultron.domain.CommandsList
 
 @Composable
-fun CommandsSection(modifier: Modifier = Modifier, commands: CommandsList) {
+fun CommandsSection(modifier: Modifier = Modifier, commands: CommandsList, onRun: (Command) -> Unit = {}) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp), modifier = modifier
     ) {
@@ -54,11 +54,12 @@ fun CommandsSection(modifier: Modifier = Modifier, commands: CommandsList) {
             }
 
             Actions(
-                command = command,
-                onAction = { commands.apply(it) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
+                    .background(color = MaterialTheme.colorScheme.surfaceVariant),
+                command = command,
+                onAction = { commands.apply(it) },
+                onRun = onRun
             )
             CommandEditor(command = command, onChange = { command = it }, isValid = isValid, onDone = {
                 Command.parse(command)?.let { commands.apply(CommandAction.Add(it)) }
@@ -101,23 +102,24 @@ fun CommandEditor(
 }
 
 @Composable
-fun Actions(command: String, onAction: (CommandAction) -> Unit, modifier: Modifier = Modifier) {
+fun Actions(
+    modifier: Modifier = Modifier,
+    command: String,
+    onAction: (CommandAction) -> Unit,
+    onRun: (Command) -> Unit = {}
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
         Row {
-            IconButton(onClick = {
-                onAction(CommandAction.Add(Command.ToggleZAxis(-1)))
-            }) {
+            IconButton(onClick = { onRun(Command.ToggleZAxis(-1)) }) {
                 Icon(
                     imageVector = Icons.Filled.VerticalAlignBottom, contentDescription = "Z-1"
                 )
             }
-            IconButton(onClick = {
-                onAction(CommandAction.Add(Command.ToggleZAxis(1)))
-            }) {
+            IconButton(onClick = { onRun(Command.ToggleZAxis(1)) }) {
                 Icon(
                     imageVector = Icons.Filled.Upgrade, contentDescription = "Z1"
                 )

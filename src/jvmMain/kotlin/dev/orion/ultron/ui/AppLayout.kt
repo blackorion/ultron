@@ -11,6 +11,7 @@ import dev.orion.ultron.domain.Arduino
 import dev.orion.ultron.domain.rememberCommands
 import dev.orion.ultron.ui.canvas.Schema
 import dev.orion.ultron.ui.config.ApplicationConfigSection
+import dev.orion.ultron.ui.notifications.Notifications
 
 @Composable
 fun AppLayout() {
@@ -33,8 +34,14 @@ fun AppLayout() {
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxSize(),
         ) {
+            val notifications = Notifications.current
+
             CommandsSection(
                 commands = commands,
+                onRun = {
+                    arduino.runCommands(listOf(it))
+                    notifications.add("'$it' выполнена")
+                },
                 modifier = Modifier.weight(1f)
                     .fillMaxSize()
                     .background(color = MaterialTheme.colorScheme.background),

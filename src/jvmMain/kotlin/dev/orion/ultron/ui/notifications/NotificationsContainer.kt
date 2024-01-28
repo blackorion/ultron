@@ -29,12 +29,10 @@ fun NotificationsContainer() {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 80.dp)
-                        .padding(16.dp)
+                        .defaultMinSize(minHeight = 40.dp)
+                        .align(Alignment.CenterStart)
                 ) {
-                    Box(modifier = Modifier.padding(8.dp)) {
-                        Text(it.message)
-                    }
+                    Text(it.message, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
                 }
             }
         }

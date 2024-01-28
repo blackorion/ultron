@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import dev.orion.ultron.domain.Arduino
+import dev.orion.ultron.domain.Command
 import dev.orion.ultron.domain.CommandsList
 import dev.orion.ultron.ui.config.ApplicationConfig
 
@@ -37,7 +38,10 @@ fun HeaderControls(
                     enabled = config.port != null,
                     onConnect = { arduino.connect(config.port!!, config.freq.toInt()) })
 
-                IconButton(enabled = arduino.status.isConnected, onClick = { arduino.runCommands(commands) }) {
+                IconButton(
+                    enabled = arduino.status.isConnected,
+                    onClick = { arduino.runCommands(commands.list.toList()) }
+                ) {
                     Icon(
                         imageVector = Icons.Default.PlayArrow, contentDescription = "Запустить"
                     )
@@ -104,6 +108,6 @@ fun ApplicationMenuButton() {
     }
 }
 
-fun Arduino.runCommands(commands: CommandsList) {
-    commands.list.joinToString(separator = ";") { it.toString() }.let { sendMessage("$it;") }
+fun Arduino.runCommands(commands: List<Command>) {
+    sendMessage("${commands.joinToString(separator = ";") { it.toString() }};")
 }
