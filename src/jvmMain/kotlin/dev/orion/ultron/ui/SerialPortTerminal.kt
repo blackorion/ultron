@@ -55,6 +55,8 @@ fun SerialPortTerminal(
                 modifier = Modifier.weight(1f).onKeyEvent {
                     if (it.key != Key.Enter && it.key != Key.NumPadEnter) return@onKeyEvent false
 
+                    if (message.value.isBlank()) return@onKeyEvent true
+
                     arduino.sendMessage(message.value)
                     message.value = ""
                     true
