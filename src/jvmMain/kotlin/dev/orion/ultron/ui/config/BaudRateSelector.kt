@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FrequencySelector(
+fun BaudRateSelector(
     modifier: Modifier = Modifier,
     value: String,
     onChange: (String) -> Unit,

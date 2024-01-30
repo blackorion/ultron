@@ -1,80 +1,123 @@
 package dev.orion.ultron.domain
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import com.fazecast.jSerialComm.SerialPort
-import com.fazecast.jSerialComm.SerialPortDataListener
-import com.fazecast.jSerialComm.SerialPortEvent
 import dev.orion.ultron.ui.ArduinoStatus
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import java.io.BufferedReader
 
-class Arduino {
-    var status by mutableStateOf(ArduinoStatus())
-    var messages = mutableStateListOf<String>()
-    private var arduino: SerialPort? = null
+@OptIn(DelicateCoroutinesApi::class)
+class Arduino() {
 
-    fun connect(port: String, freq: Int = 9600): Boolean {
-        if (isConnected())
+    val canConnect: Boolean
+        get() = port != null && !isConnected
+    var port by mutableStateOf<String?>(null)
+    var baudRate by mutableStateOf(9600)
+    var isConnected by mutableStateOf(false)
+
+    private var connection: Connection? = null
+
+    fun connect(): ArduinoStatus {
+        if (connection != null)
             throw IllegalStateException("already connected")
 
-        arduino = SerialPort.getCommPort(port)
+        if (port == null)
+            throw IllegalStateException("port is not set")
 
-        return arduino?.let {
-            it.setComPortParameters(freq, 8, 1, 0)
-            it.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0)
+        val serialPort = SerialPort.getCommPort(port).apply {
+            setComPortParameters(this@Arduino.baudRate, 8, 1, 0)
+            setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0)
+        }
 
-            it.addDataListener(object : SerialPortDataListener {
-                override fun getListeningEvents(): Int {
-                    return SerialPort.LISTENING_EVENT_DATA_AVAILABLE
-                }
+        connection = Connection.open(serialPort)
+        isConnected = true
 
-                override fun serialEvent(event: SerialPortEvent) {
-                    if (event.eventType != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
-                        return
-
-                    var message = ""
-
-                    while (it.bytesAvailable() > 0) {
-                        it.inputStream.bufferedReader().use { reader ->
-                            message += reader.readLine()
-                        }
-                    }
-
-                    messages.add(message)
-                }
-            })
-
-            val connection = it.openPort()
-
-            if (connection)
-                status = ArduinoStatus(isConnected = true, port)
-
-            return connection
-        } ?: false
+        return ArduinoStatus(true, port)
     }
 
-    fun isConnected(): Boolean {
-        return arduino?.isOpen ?: false
-    }
+    fun disconnect(): ArduinoStatus {
+        connection?.close()
+        connection = null
+        isConnected = false
 
-    fun disconnect() {
-        arduino?.closePort()
-        status = ArduinoStatus(false)
+        return ArduinoStatus()
     }
 
     fun sendMessage(message: String) {
-        arduino?.let {
-            it.outputStream.use { os ->
-                os.bufferedWriter().use { writer ->
-                    writer.append(message).flush()
-                }
+        connection?.send(message)
+    }
+
+    fun getMessagesFlow(): Flow<String> {
+        if (connection == null)
+            throw IllegalStateException("not connected")
+
+        return connection!!.read()
+    }
+
+}
+
+@DelicateCoroutinesApi
+data class Connection(private val serialPort: SerialPort) : AutoCloseable {
+
+    private val scope = CoroutineScope(Dispatchers.IO)
+    private val sendChannel = Channel<String>()
+
+    init {
+        scope.launch {
+            val writer = serialPort.outputStream.bufferedWriter()
+
+            for (message in sendChannel) {
+                writer.append(message)
+                writer.newLine()
+                writer.flush()
             }
+
+            writer.close()
         }
     }
 
-    fun clearMessages() {
-        messages.clear()
+    fun send(message: String) = scope.launch {
+        if (!sendChannel.isClosedForSend)
+            sendChannel.send(message.trim())
     }
 
+    fun read() = serialPort
+        .inputStream
+        .bufferedReader()
+        .asFlow()
+
+    override fun close() {
+        serialPort.removeDataListener()
+        serialPort.closePort()
+        sendChannel.close()
+    }
+
+    companion object {
+        fun open(serialPort: SerialPort): Connection {
+            serialPort.openPort()
+
+            return Connection(serialPort)
+        }
+    }
+}
+
+@Composable
+fun rememberArduino(): Arduino = remember { Arduino() }
+
+fun BufferedReader.asFlow(): Flow<String> {
+    return flow {
+        while (true)
+            emit(readLine())
+    }
+        .cancellable()
+        .onCompletion {
+            close()
+            println("closed")
+        }
+        .flowOn(Dispatchers.IO)
 }

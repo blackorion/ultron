@@ -8,14 +8,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import dev.orion.ultron.ui.AppLayout
-import dev.orion.ultron.ui.config.ApplicationConfigProvider
 import dev.orion.ultron.ui.notifications.NotificationsContainer
 import dev.orion.ultron.ui.notifications.NotificationsProvider
-import java.util.prefs.Preferences
+import dev.orion.ultron.ui.serialport.SerialPortConfigProvider
+import dev.orion.ultron.ui.sidebar.SidebarStateProvider
 
-fun main() {
-    val preferences = Preferences.userRoot().node("ultron")
-
+fun main() =
     application {
         Window(
             title = "Ultron",
@@ -27,15 +25,16 @@ fun main() {
                 shapes = MaterialTheme.shapes,
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    ApplicationConfigProvider(preferences) {
-                        NotificationsProvider {
-                            AppLayout()
-                            NotificationsContainer()
+                    SidebarStateProvider {
+                        SerialPortConfigProvider {
+                            NotificationsProvider {
+                                AppLayout()
+                                NotificationsContainer()
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
 

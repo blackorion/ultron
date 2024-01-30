@@ -10,12 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.orion.ultron.domain.Arduino
+import dev.orion.ultron.ui.serialport.SerialPortConfig
 
 @Composable
 fun ApplicationConfigSection(modifier: Modifier = Modifier, arduino: Arduino) {
-    val config = ApplicationConfig.current
-
-    if (!config.isOpen) return
+    val config = SerialPortConfig.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -24,7 +23,11 @@ fun ApplicationConfigSection(modifier: Modifier = Modifier, arduino: Arduino) {
             .background(MaterialTheme.colorScheme.background)
             .padding(8.dp)
     ) {
-        SerialPortSelector(enabled = !arduino.status.isConnected, value = config.port, onChange = { config.port = it })
-        FrequencySelector(value = config.freq, onChange = { config.freq = it }, enabled = !arduino.status.isConnected)
+        SerialPortSelector(enabled = !arduino.isConnected, value = config.port, onChange = { config.port = it })
+        BaudRateSelector(
+            value = config.baudRate,
+            onChange = { config.baudRate = it },
+            enabled = !arduino.isConnected
+        )
     }
 }

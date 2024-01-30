@@ -16,7 +16,7 @@ import androidx.compose.ui.window.Window
 import dev.orion.ultron.domain.Arduino
 import dev.orion.ultron.domain.Command
 import dev.orion.ultron.domain.CommandsList
-import dev.orion.ultron.ui.config.ApplicationConfig
+import dev.orion.ultron.ui.sidebar.Sidebar
 
 @Composable
 fun HeaderControls(
@@ -29,57 +29,59 @@ fun HeaderControls(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        ApplicationConfig.current.let { config ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                ConnectionButton(arduino = arduino,
-                    enabled = config.port != null,
-                    onConnect = { arduino.connect(config.port!!, config.freq.toInt()) })
-
-                IconButton(
-                    enabled = arduino.status.isConnected,
-                    onClick = { arduino.runCommands(commands.list.toList()) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow, contentDescription = "Запустить"
-                    )
-                }
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TerminalButton(arduino)
-                ApplicationMenuButton()
-            }
-        }
-    }
-}
-
-@Composable
-fun ConnectionButton(arduino: Arduino, enabled: Boolean, onConnect: (Int) -> Unit) {
-    ApplicationConfig.current.let { config ->
-        FilledTonalIconToggleButton(
-            enabled = enabled,
-            checked = arduino.status.isConnected,
-            onCheckedChange = {
-                if (it) onConnect(config.freq.toInt()) else arduino.disconnect()
-            },
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (arduino.status.isConnected) Icon(Icons.Filled.LinkOff, contentDescription = "Отключить")
-            else Icon(Icons.Filled.Link, contentDescription = "Подключить")
+            ConnectionButton(
+                arduino = arduino,
+                enabled = arduino.canConnect,
+            )
+
+            IconButton(
+                enabled = arduino.isConnected,
+                onClick = { arduino.runCommands(commands.list.toList()) }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow, contentDescription = "Запустить"
+                )
+            }
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            TerminalButton(
+                arduino = arduino,
+            )
+            ApplicationMenuButton()
         }
     }
 }
 
 @Composable
-fun TerminalButton(arduino: Arduino) {
+fun ConnectionButton(arduino: Arduino, enabled: Boolean) {
+    FilledTonalIconToggleButton(
+        enabled = enabled,
+        checked = arduino.isConnected,
+        onCheckedChange = {
+            if (it) arduino.connect()
+            else arduino.disconnect()
+        },
+    ) {
+        if (arduino.isConnected) Icon(Icons.Filled.LinkOff, contentDescription = "Отключить")
+        else Icon(Icons.Filled.Link, contentDescription = "Подключить")
+    }
+}
+
+@Composable
+fun TerminalButton(
+    arduino: Arduino,
+) {
     var open by remember { mutableStateOf(false) }
 
-    IconButton(enabled = arduino.status.isConnected, onClick = { open = true }) {
+    IconButton(enabled = arduino.isConnected, onClick = { open = true }) {
         Icon(
             imageVector = Icons.Default.Terminal,
             contentDescription = "терминал",
@@ -89,20 +91,20 @@ fun TerminalButton(arduino: Arduino) {
     if (open) Window(onCloseRequest = {
         open = false
     }) {
-        ArduinoTerminal(arduino)
+        SerialPortTerminal(arduino)
     }
 }
 
 @Composable
 fun ApplicationMenuButton() {
-    ApplicationConfig.current.let { config ->
+    Sidebar.current.let { sidebar ->
         IconToggleButton(
-            checked = config.isOpen,
-            onCheckedChange = { config.toggle(it) }
+            checked = sidebar.isExpanded,
+            onCheckedChange = { sidebar.isExpanded = it }
         ) {
             Icon(
-                imageVector = if (config.isOpen) Icons.Default.ArrowCircleRight else Icons.Default.ArrowCircleLeft,
-                contentDescription = if (config.isOpen) "Скрыть" else "Показать",
+                imageVector = if (sidebar.isExpanded) Icons.Default.ArrowCircleRight else Icons.Default.ArrowCircleLeft,
+                contentDescription = if (sidebar.isExpanded) "Скрыть" else "Показать",
             )
         }
     }

@@ -11,9 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -23,11 +21,27 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.orion.ultron.domain.Arduino
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ArduinoTerminal(arduino: Arduino) {
+fun SerialPortTerminal(
+    arduino: Arduino,
+) {
+    val scope = rememberCoroutineScope()
     val message = remember { mutableStateOf("") }
+    val messages = remember { mutableStateListOf<String>() }
+
+    DisposableEffect(arduino) {
+        val job = scope.launch {
+            arduino.getMessagesFlow().collectLatest {
+                messages.add(it)
+            }
+        }
+
+        onDispose { job.cancel() }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp)
@@ -47,9 +61,7 @@ fun ArduinoTerminal(arduino: Arduino) {
                 })
 
             Column(modifier = Modifier.width(200.dp)) {
-                IconButton(onClick = {
-                    arduino.clearMessages()
-                }) {
+                IconButton(onClick = { messages.clear() }) {
                     Icon(
                         Icons.Default.Clear,
                         contentDescription = "очистить",
@@ -76,7 +88,7 @@ fun ArduinoTerminal(arduino: Arduino) {
                         .background(MaterialTheme.colorScheme.background),
                     state
                 ) {
-                    items(arduino.messages) { message ->
+                    items(messages) { message ->
                         Text(message)
                     }
                 }
