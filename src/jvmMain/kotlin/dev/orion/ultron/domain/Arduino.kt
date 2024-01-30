@@ -115,9 +115,6 @@ fun BufferedReader.asFlow(): Flow<String> {
             emit(readLine())
     }
         .cancellable()
-        .onCompletion {
-            close()
-            println("closed")
-        }
+        .onCompletion { close() }
         .flowOn(Dispatchers.IO)
 }
